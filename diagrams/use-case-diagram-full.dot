@@ -1,0 +1,5 @@
+digraph G { rankdir=LR; graph [bgcolor="white",pad="0.3"]; node [fontname="Arial",fontsize=10];
+subgraph cluster_system { label="Smart Sentiment Analysis System"; color="#3b6666"; style="rounded"; node [shape=ellipse,style="filled",fillcolor="#eef6f6",color="#3b6666"];
+UC1[label="Submit Review"]; UC2[label="View Review Result"]; UC3[label="Browse Reviews"]; UC4[label="Filter by Sentiment/Product"]; UC5[label="View Sentiment Statistics"]; UC6[label="Manage Review"]; UC7[label="Run Sentiment Prediction"]; }
+Customer[shape=box,label="Customer",style="rounded,filled",fillcolor="#fff4df"]; Admin[shape=box,label="Store Admin",style="rounded,filled",fillcolor="#fff4df"]; ML[shape=box,label="ML.NET Model",style="rounded,filled",fillcolor="#e8f0ff"];
+Customer->UC1; Customer->UC2; Admin->UC3; Admin->UC4; Admin->UC5; Admin->UC6; UC1->UC7 [label="includes"]; ML->UC7 [label="performs"];}

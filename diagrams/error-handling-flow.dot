@@ -1,0 +1,4 @@
+digraph G { rankdir=TB; graph [bgcolor="white",pad="0.3"]; node [shape=box,style="rounded,filled",fontname="Arial",fillcolor="#eef6f6",color="#3b6666"];
+Request[label="Incoming request"]; Validate[shape=diamond,label="Validation error?"]; Business[shape=diamond,label="Business rule error?"]; Infra[shape=diamond,label="Infrastructure/ML error?"]; Log[label="Structured log
+(no secrets) "]; Map[label="Map to standard API error
+status + message + trace id"]; Response[label="HTTP response"]; Request->Validate; Validate->Log[label="Yes"]; Validate->Business[label="No"]; Business->Log[label="Yes"]; Business->Infra[label="No"]; Infra->Log[label="Yes"]; Infra->Response[label="No"]; Log->Map->Response;}

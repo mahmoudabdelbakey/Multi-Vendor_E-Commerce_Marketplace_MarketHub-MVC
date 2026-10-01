@@ -1,0 +1,3 @@
+digraph G { rankdir=TB; graph [bgcolor="white",pad="0.3"]; node [shape=box,style="rounded,filled",fontname="Arial",fillcolor="#eef6f6",color="#3b6666"];
+Login[label="Admin Login"]; Auth[shape=diamond,label="Authorized?"]; Summary[label="Load sentiment summary"]; Filters[label="Apply product/sentiment/date filters"]; Reviews[label="Review list"]; Details[label="Review details + prediction"]; Export[label="Optional export/report"];
+Login->Auth; Auth->Summary[label="Yes"]; Auth->Login[label="No",style=dashed]; Summary->Filters->Reviews->Details->Export;}

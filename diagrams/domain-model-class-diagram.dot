@@ -1,0 +1,5 @@
+digraph G { rankdir=LR; graph [bgcolor="white",pad="0.3"]; node [shape=plain,fontname="Arial"];
+Product[label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0"><TR><TD BGCOLOR="#dcefee"><B>Product</B></TD></TR><TR><TD ALIGN="LEFT">ProductId : int</TD></TR><TR><TD ALIGN="LEFT">Name : string</TD></TR></TABLE>>];
+Review[label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0"><TR><TD BGCOLOR="#dcefee"><B>Review</B></TD></TR><TR><TD ALIGN="LEFT">ReviewId : int</TD></TR><TR><TD ALIGN="LEFT">ProductId : int?</TD></TR><TR><TD ALIGN="LEFT">ReviewText : string</TD></TR><TR><TD ALIGN="LEFT">CreatedAt : DateTime</TD></TR></TABLE>>];
+Prediction[label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0"><TR><TD BGCOLOR="#dcefee"><B>SentimentPrediction</B></TD></TR><TR><TD ALIGN="LEFT">PredictionId : int</TD></TR><TR><TD ALIGN="LEFT">ReviewId : int</TD></TR><TR><TD ALIGN="LEFT">Label : string</TD></TR><TR><TD ALIGN="LEFT">Score : float?</TD></TR><TR><TD ALIGN="LEFT">CreatedAt : DateTime</TD></TR></TABLE>>];
+Product->Review[label="1 : N"]; Review->Prediction[label="1 : 1 current result"]; }

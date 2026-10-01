@@ -1,0 +1,1 @@
+digraph G { rankdir=LR; graph [bgcolor="white",pad="0.3"]; node [shape=box,style="rounded,filled",fontname="Arial",fillcolor="#eef6f6"]; Admin->API[label="GET /reviews/{id}"]; API->Auth[label="authorize"]; Auth->Service[label="allowed"]; Service->DB[label="load review + prediction"]; DB->Service[label="data"]; Service->API[label="DTO"]; API->Admin[label="200 JSON"]; }

@@ -1,0 +1,8 @@
+digraph G { rankdir=LR; graph [bgcolor="white",pad="0.3"]; node [shape=box,style="rounded,filled",fontname="Arial",fillcolor="#eef6f6",color="#3b6666"];
+API[label="API Layer
+Controllers + DTOs"]; App[label="Application Layer
+Use Cases / Services"]; Domain[label="Domain Layer
+Entities / Rules"]; Infra[label="Infrastructure
+EF Core / SQL / ML.NET"]; Tests[label="Tests
+Unit + Integration"];
+API->App; App->Domain; App->Infra; Tests->API; Tests->App; Tests->Infra;}

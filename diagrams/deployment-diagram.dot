@@ -1,0 +1,4 @@
+digraph G { rankdir=LR; graph [bgcolor="white",pad="0.3"]; node [shape=box,style="rounded,filled",fontname="Arial",fillcolor="#eef6f6",color="#3b6666"];
+Client[label="Browser / Client App"]; Host[label="Application Host
+ASP.NET Core API"]; Model[label="ML.NET Model Artifact
+loaded by API"]; SQL[label="SQL Server"]; Logs[label="Logging / Monitoring"]; Client->Host[label="HTTPS"]; Host->Model[label="Inference"]; Host->SQL[label="SQL / EF Core"]; Host->Logs[label="structured logs"];}
