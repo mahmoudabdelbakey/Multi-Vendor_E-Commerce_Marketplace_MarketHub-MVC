@@ -1,4 +1,4 @@
-HEAD
+<<<<<<< HEAD
 
 # Smart Sentiment Analysis API for E-Commerce Reviews
 
@@ -91,7 +91,7 @@ An AI-powered API that automatically analyzes e-commerce product reviews and cla
 > > > > > > > | Sequence — Customer Submits Review | `diagrams/sequence-diagrams/01-customer-submits-review` |
 > > > > > > > | Sequence — ML Model Sentiment Prediction | `diagrams/sequence-diagrams/02-ml-sentiment-prediction` |
 > > > > > > > | Sequence — Store Admin Views Dashboard | `diagrams/sequence-diagrams/03-admin-views-dashboard` |
-> > > > > > > HEAD
+> > > > > > > <<<<<<< HEAD
 > > > > > > > | Sequence — Admin Manages Review | `diagrams/sequence-diagrams/04-admin-review-management` |
 > > > > > > > | Sequence — Authentication | `diagrams/sequence-diagrams/05-authentication-flow` |
 > > > > > > > | DFD Level 0 — System | `diagrams/dfd-level-0` |
@@ -131,14 +131,13 @@ The diagrams intentionally describe a practical MVP plus extensible features. Th
 ## Sources
 
 - Hugging Face datasets: use a suitable sentiment dataset and verify its license, labels, language, and redistribution terms before inclusion.
-- Microsoft ML.NET documentation/tutorials: use official Microsoft guidance for model training and inference.
-
-| DFD Level 0 | `diagrams/dfd-level-0` |
-| DFD Level 1 — Review Analysis Pipeline | `diagrams/dfd-level-1-review-analysis` |
-| Domain Model / Class Diagram | `diagrams/domain-model-class-diagram` |
-| Deployment Diagram | `diagrams/deployment-diagram` |
-| Conceptual ERD (crow's-foot) | `diagrams/conceptual-erd` |
-| System Architecture Diagram (API + ML.NET integration) | `diagrams/system-architecture-diagram` |
+- # Microsoft ML.NET documentation/tutorials: use official Microsoft guidance for model training and inference.
+  | DFD Level 0 | `diagrams/dfd-level-0` |
+  | DFD Level 1 — Review Analysis Pipeline | `diagrams/dfd-level-1-review-analysis` |
+  | Domain Model / Class Diagram | `diagrams/domain-model-class-diagram` |
+  | Deployment Diagram | `diagrams/deployment-diagram` |
+  | Conceptual ERD (crow's-foot) | `diagrams/conceptual-erd` |
+  | System Architecture Diagram (API + ML.NET integration) | `diagrams/system-architecture-diagram` |
 
 Each diagram will be available as `.png` (quick preview), `.svg` (vector, editable), and `.pdf` (print-ready) — same file name, different extension.
 
