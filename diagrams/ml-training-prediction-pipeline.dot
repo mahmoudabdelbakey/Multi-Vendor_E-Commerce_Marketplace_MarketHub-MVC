@@ -1,3 +1,0 @@
-digraph G { rankdir=LR; graph [bgcolor="white",pad="0.3"]; node [shape=box,style="rounded,filled",fontname="Arial",fillcolor="#eef6f6",color="#3b6666"];
-Data[label="Labeled Sentiment Dataset"]; Clean[label="Clean / validate data"]; Split[label="Train / Test split"]; Train[label="ML.NET Training Pipeline"]; Eval[label="Evaluate metrics"]; Export[label="Save Model Artifact"]; Load[label="Load model in ASP.NET Core"]; Predict[label="Predict new review"]; Monitor[label="Evaluate / improve over time"];
-Data->Clean->Split->Train->Eval; Eval->Export[label="acceptable"]; Export->Load->Predict; Eval->Train[label="iterate",style=dashed]; Predict->Monitor[label="feedback/evaluation",style=dashed]; Monitor->Data[label="new approved data",style=dashed];}

@@ -1,6 +1,0 @@
-digraph G { rankdir=LR; graph [bgcolor="white",pad="0.3"]; node [shape=box,style="rounded,filled",fontname="Arial",fontsize=11,fillcolor="#eef6f6",color="#3b6666"]; edge [fontname="Arial",fontsize=10,color="#555555"];
-Customer [label="Customer / Client App"]; Admin [label="Store Admin"]; API [label="Smart Sentiment Analysis API
-ASP.NET Core Web API",fillcolor="#dcefee"]; DB [label="SQL Server
-Reviews + Predictions"]; ML [label="ML.NET Sentiment Model"]; Dataset [label="Training Dataset
-(Hugging Face / approved source)",shape=folder];
-Customer->API [label="Submit review / query result"]; Admin->API [label="Dashboard / review queries"]; API->DB [label="Read / write data"]; API->ML [label="Predict sentiment"]; ML->API [label="Label + model output"]; Dataset->ML [label="Training / evaluation data"]; }

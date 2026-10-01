@@ -1,1 +1,0 @@
-digraph G { rankdir=LR; graph [bgcolor="white",pad="0.3"]; node [shape=box,style="rounded,filled",fontname="Arial",fillcolor="#eef6f6"]; Client->API[label="login credentials"]; API->Auth[label="authenticate"]; Auth->UserStore[label="load user"]; UserStore->Auth[label="user record"]; Auth->API[label="token / failure"]; API->Client[label="response"]; }

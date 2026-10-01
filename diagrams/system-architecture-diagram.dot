@@ -1,6 +1,0 @@
-digraph G { rankdir=LR; graph [bgcolor="white",pad="0.3"]; node [shape=box,style="rounded,filled",fontname="Arial",fillcolor="#eef6f6",color="#3b6666"];
-Client[label="Client / Frontend"]; Controller[label="Controllers
-HTTP / DTO boundary"]; Service[label="Application / Business Services"]; MLService[label="Sentiment Analysis Service
-ML.NET integration"]; Data[label="EF Core / DbContext"]; DB[label="SQL Server"]; Model[label="ML.NET Model
-artifact"]; Logging[label="Logging / Error Handling"];
-Client->Controller->Service; Service->MLService; Service->Data; Data->DB; MLService->Model; Controller->Logging; Service->Logging; MLService->Logging;}

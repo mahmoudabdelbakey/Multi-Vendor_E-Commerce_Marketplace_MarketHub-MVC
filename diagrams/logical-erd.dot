@@ -1,4 +1,0 @@
-digraph G { rankdir=LR; graph [bgcolor="white",pad="0.3"]; node [shape=plain,fontname="Arial"];
-P[label=<<TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0"><TR><TD COLSPAN="2" BGCOLOR="#dcefee"><B>Products</B></TD></TR><TR><TD>PK</TD><TD>ProductId</TD></TR><TR><TD></TD><TD>Name</TD></TR></TABLE>>];
-R[label=<<TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0"><TR><TD COLSPAN="2" BGCOLOR="#dcefee"><B>Reviews</B></TD></TR><TR><TD>PK</TD><TD>ReviewId</TD></TR><TR><TD>FK</TD><TD>ProductId</TD></TR><TR><TD></TD><TD>ReviewText</TD></TR><TR><TD></TD><TD>CreatedAt</TD></TR></TABLE>>];
-S[label=<<TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0"><TR><TD COLSPAN="2" BGCOLOR="#dcefee"><B>SentimentPredictions</B></TD></TR><TR><TD>PK</TD><TD>PredictionId</TD></TR><TR><TD>FK</TD><TD>ReviewId</TD></TR><TR><TD></TD><TD>Label</TD></TR><TR><TD></TD><TD>Score</TD></TR><TR><TD></TD><TD>CreatedAt</TD></TR></TABLE>>]; P->R; R->S;}

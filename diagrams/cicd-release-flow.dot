@@ -1,3 +1,0 @@
-digraph G { rankdir=LR; graph [bgcolor="white",pad="0.3"]; node [shape=box,style="rounded,filled",fontname="Arial",fillcolor="#eef6f6",color="#3b6666"];
-Dev[label="Developer branch"]; PR[label="Pull Request"]; Build[label="Build"]; Test[label="Automated tests"]; Review[label="Code review"]; Package[label="Release artifact"]; Deploy[label="Deploy to environment"]; Smoke[label="Smoke / health checks"]; Monitor[label="Logs / monitoring"];
-Dev->PR->Review->Build->Test->Package->Deploy->Smoke->Monitor; Test->PR[label="failure",style=dashed];}

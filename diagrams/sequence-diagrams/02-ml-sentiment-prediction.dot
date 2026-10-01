@@ -1,1 +1,0 @@
-digraph G { rankdir=LR; graph [bgcolor="white",pad="0.3"]; node [shape=box,style="rounded,filled",fontname="Arial",fillcolor="#eef6f6"]; Service->MLService[label="Predict(reviewText)"]; MLService->Model[label="Transform + Predict"]; Model->MLService[label="label / score"]; MLService->Service[label="PredictionResult"]; }

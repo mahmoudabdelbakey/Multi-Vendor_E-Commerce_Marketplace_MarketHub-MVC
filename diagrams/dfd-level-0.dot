@@ -1,5 +1,0 @@
-digraph G { rankdir=LR; graph [bgcolor="white",pad="0.3"]; node [fontname="Arial",fontsize=10]; edge [fontname="Arial",fontsize=10,color="#555"];
-Customer[shape=box,label="Customer / Client"]; Admin[shape=box,label="Store Admin"]; P0[shape=circle,label="0
-Smart Sentiment
-Analysis System",style="filled",fillcolor="#dcefee"]; D1[shape=cylinder,label="D1 Reviews & Predictions",style="filled",fillcolor="#f5f1e8"]; ML[shape=box,label="ML.NET Model"];
-Customer->P0[label="Review / request"]; P0->Customer[label="Result / status"]; Admin->P0[label="Queries / admin actions"]; P0->Admin[label="Reviews / analytics"]; P0->D1[label="Store / read"]; D1->P0[label="Review data"]; P0->ML[label="Text/features"]; ML->P0[label="Prediction"];}
