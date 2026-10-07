@@ -1,0 +1,10 @@
+stateDiagram-v2
+  direction LR
+  state "Order.Status" as OS {
+    [*] --> PendingPayment: order created, stock reserved
+    PendingPayment --> Paid: webhook paid
+    PendingPayment --> Cancelled: session expired / failed / customer cancel
+    Paid --> Completed: all items Delivered
+    Completed --> [*]
+    Cancelled --> [*]
+  }

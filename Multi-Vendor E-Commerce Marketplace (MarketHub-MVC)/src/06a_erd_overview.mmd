@@ -1,0 +1,18 @@
+erDiagram
+  ApplicationUser ||--o| VendorProfile : "applies / owns"
+  ApplicationUser ||--o{ Order : "places"
+  ApplicationUser ||--o{ CartItem : "has"
+  ApplicationUser ||--o{ Review : "writes"
+  VendorProfile ||--o{ Product : "sells"
+  VendorProfile ||--o{ OrderItem : "fulfills"
+  VendorProfile ||--o{ CommissionRecord : "earns"
+  Category ||--o{ Product : "groups"
+  Product ||--o{ ProductImage : "has"
+  Product ||--o{ CartItem : "in cart"
+  Product ||--o{ OrderItem : "ordered as"
+  Product ||--o{ Review : "receives"
+  Order ||--|{ OrderItem : "contains"
+  Order ||--o{ Payment : "paid by"
+  OrderItem ||--o| CommissionRecord : "generates"
+  CommissionSetting ||--o{ CommissionRecord : "rate source"
+  StripeWebhookEvent

@@ -1,0 +1,31 @@
+digraph G {
+layout=neato; splines=true; overlap=true;
+labelloc=t; fontsize=22; fontname="DejaVu Sans"; label="GitHub Collaboration Workflow";
+node [fontname="DejaVu Sans", fontsize=13, style="filled,rounded", shape=box, margin="0.12,0.08"];
+edge [fontname="DejaVu Sans", fontsize=11, arrowsize=0.8];
+i [label="GitHub Issue\n(story slice)", shape=ellipse, style=filled, fillcolor="#C8E6C9", width=1.3, height=0.6, pos="0.00,0.00!"];
+b [label="git switch -c\nfeature/42-name", shape=box, style="filled,rounded", fillcolor="#E3F2FD", width=2.4, height=0.9, pos="3.30,0.00!"];
+c [label="Small commits\n(pair programming)", shape=box, style="filled,rounded", fillcolor="#E3F2FD", width=2.4, height=0.9, pos="6.60,0.00!"];
+sy [label="git fetch + rebase\nor merge origin/main", shape=box, style="filled,rounded", fillcolor="#E3F2FD", width=2.4, height=0.9, pos="9.90,0.00!"];
+pu [label="git push -u origin\nfeature/...", shape=box, style="filled,rounded", fillcolor="#E3F2FD", width=2.4, height=0.9, pos="13.20,0.00!"];
+pr [label="Open Pull Request\n(template, Closes #42)", shape=box, style="filled,rounded", fillcolor="#FFF3CD", width=2.4, height=0.9, pos="13.20,-2.55!"];
+ci [label="CI: build + tests\npass?", shape=diamond, style=filled, fillcolor="#E3F2FD", width=2.5, height=1.25, fontsize=12, pos="9.90,-2.55!"];
+rv [label="Peer review by\nassigned reviewer", shape=box, style="filled,rounded", fillcolor="#FFF3CD", width=2.4, height=0.9, pos="6.60,-2.55!"];
+ch [label="Changes\nrequested?", shape=diamond, style=filled, fillcolor="#FFF3CD", width=2.5, height=1.25, fontsize=12, pos="3.30,-2.55!"];
+ap [label="Approve (1 reviewer,\n2 for DB / Payment)", shape=box, style="filled,rounded", fillcolor="#E8F5E9", width=2.4, height=0.9, pos="3.30,-5.10!"];
+mg [label="Squash and merge\ninto main", shape=box, style="filled,rounded", fillcolor="#E8F5E9", width=2.4, height=0.9, pos="6.60,-5.10!"];
+dl [label="Delete branch,\nall pull main", shape=ellipse, style=filled, fillcolor="#E0E0E0", width=1.3, height=0.6, pos="9.90,-5.10!"];
+i->b
+b->c
+c->sy
+sy->pu
+pu->pr
+pr->ci
+ci->rv [label="Yes"]
+ci->c [label="No: fix", constraint=false, style=dashed]
+rv->ch
+ch->ap [label="No"]
+ch->c [label="Yes: fix", constraint=false, style=dashed]
+ap->mg
+mg->dl
+}

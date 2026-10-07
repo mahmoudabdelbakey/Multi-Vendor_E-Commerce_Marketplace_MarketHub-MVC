@@ -1,0 +1,24 @@
+flowchart TB
+  subgraph Dev["Local Development (each member)"]
+    IDE["Visual Studio / VS Code<br/>.NET 10 SDK"]
+    LDB[("SQL Server Express / LocalDB<br/>user-secrets for keys")]
+    CLI["Stripe CLI<br/>stripe listen --forward-to"]
+  end
+  subgraph GH["GitHub"]
+    Repo["Repository (main + feature branches)"]
+    CI["GitHub Actions<br/>build + test on every PR"]
+  end
+  subgraph Prod["Production / Demo (host: team decision)"]
+    Host["Web Host running MarketHub.Web<br/>HTTPS + Environment Variables"]
+    PDB[("Hosted SQL Server<br/>Connection String from env")]
+    Up["Uploads folder or Blob Storage"]
+  end
+  SDash{{"Stripe Dashboard<br/>Test Mode + Webhook Endpoint"}}
+  IDE -- "git push" --> Repo --> CI
+  CI -- "deploy after merge to main" --> Host
+  Host --> PDB
+  Host --> Up
+  Host -- "API calls" --> SDash
+  SDash -- "POST /stripe/webhook (signed)" --> Host
+  CLI -. "forwards test events" .-> IDE
+  IDE --> LDB

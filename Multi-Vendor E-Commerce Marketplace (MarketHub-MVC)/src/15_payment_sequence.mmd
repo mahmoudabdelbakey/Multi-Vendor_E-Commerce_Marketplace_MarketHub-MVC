@@ -1,0 +1,23 @@
+sequenceDiagram
+  autonumber
+  participant B as Customer Browser
+  participant CC as CheckoutController
+  participant CS as CheckoutService
+  participant DB as SQL Server
+  participant ST as Stripe API
+  B->>CC: POST /Checkout/Pay (shipping + AntiForgery token)
+  CC->>CS: CreateOrderAndSessionAsync(userId, shipping)
+  CS->>DB: Load cart + products (current price and stock)
+  CS->>DB: BEGIN TX: insert Order PendingPayment, OrderItems, reserve stock, insert Payment Pending
+  DB-->>CS: COMMIT ok
+  CS->>ST: Create Checkout Session (line items, metadata OrderId, expires_at)
+  ST-->>CS: Session Id + Url
+  CS->>DB: Save StripeCheckoutSessionId on Payment
+  CS-->>CC: Session Url
+  CC-->>B: 303 Redirect to Stripe Url
+  B->>ST: Customer pays with test card
+  ST-->>B: Redirect to /Checkout/Success?orderId=...
+  B->>CC: GET /Checkout/Success
+  CC->>DB: Read Order status
+  CC-->>B: Page: payment is being confirmed
+  Note over ST,DB: The redirect NEVER marks the order as paid. Only the signed webhook does (Diagram 17)

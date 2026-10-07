@@ -1,0 +1,48 @@
+flowchart TB
+  subgraph UI["Presentation Layer"]
+    direction LR
+    C1["Controllers"]
+    C2["Areas/Vendor<br/>Controllers"]
+    C3["Areas/Admin<br/>Controllers"]
+    V1["Razor Views<br/>+ Layouts"]
+    VM["ViewModels<br/>+ Validation"]
+  end
+  subgraph SV["Application Services Layer"]
+    direction TB
+    subgraph SA["Storefront services"]
+      direction LR
+      S1["IProductService"]
+      S2["ICartService"]
+      S3["ICheckoutService"]
+      S4["IOrderService"]
+    end
+    subgraph SB["Money and vendor services"]
+      direction LR
+      S5["IPaymentService"]
+      S6["IStripeWebhookService"]
+      S7["ICommissionService"]
+      S8["IVendorService"]
+      S9["ICurrentVendorService"]
+    end
+  end
+  subgraph DL["Data Access Layer"]
+    direction LR
+    DB["ApplicationDbContext"]
+    EC["EntityTypeConfigurations"]
+    SD["DbSeeder"]
+  end
+  subgraph XC["Cross-Cutting"]
+    direction LR
+    ID["ASP.NET Core Identity"]
+    AZ["Authorization Policies"]
+    LG["ILogger"]
+    EX["Exception Handler"]
+  end
+  ST{{"Stripe.net SDK"}}
+  SQ[("SQL Server")]
+  UI --> SV
+  SV --> DL
+  DL --> SQ
+  SB --> ST
+  XC -.-> UI
+  XC -.-> DL
