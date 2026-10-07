@@ -1,0 +1,25 @@
+sequenceDiagram
+  autonumber
+  participant V as Vendor Browser
+  participant VC as Vendor OrdersController
+  participant OS as OrderService
+  participant DB as SQL Server
+  participant C as Customer Browser
+  Note over DB: Order is already Paid (set by the webhook, Diagram 17)
+  V->>VC: GET /Vendor/Orders
+  VC->>OS: GetVendorOrderItemsAsync(currentVendorId)
+  OS->>DB: SELECT OrderItems WHERE VendorProfileId = currentVendorId
+  DB-->>VC: Only this vendor items
+  V->>VC: POST MarkShipped(orderItemId)
+  VC->>OS: UpdateFulfillmentAsync(orderItemId, Shipped, vendorId)
+  OS->>DB: Load item WHERE Id = orderItemId AND VendorProfileId = vendorId
+  alt item not found for this vendor
+    OS-->>VC: NotFound (no data leak)
+  else transition Pending to Shipped is allowed
+    OS->>DB: FulfillmentStatus = Shipped
+  end
+  V->>VC: POST MarkDelivered(orderItemId)
+  VC->>OS: UpdateFulfillmentAsync(orderItemId, Delivered, vendorId)
+  OS->>DB: Update item, then if all active items Delivered set Order = Completed
+  C->>OS: GET /Orders/Details/5 (own order only)
+  OS-->>C: Items grouped by vendor with each FulfillmentStatus

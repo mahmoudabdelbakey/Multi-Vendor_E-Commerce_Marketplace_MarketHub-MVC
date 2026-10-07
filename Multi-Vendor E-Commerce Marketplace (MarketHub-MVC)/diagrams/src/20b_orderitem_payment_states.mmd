@@ -1,0 +1,9 @@
+stateDiagram-v2
+  direction LR
+  state "OrderItem.FulfillmentStatus" as FS {
+    [*] --> Pending
+    Pending --> Shipped: vendor ships (order must be Paid)
+    Shipped --> Delivered: vendor confirms
+    Pending --> Cancelled: order cancelled
+    Delivered --> [*]
+  }

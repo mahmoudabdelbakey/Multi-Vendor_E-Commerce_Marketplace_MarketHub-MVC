@@ -1,0 +1,69 @@
+erDiagram
+  ApplicationUser ||--o{ Order : "places"
+  Order ||--|{ OrderItem : "contains"
+  Order ||--o{ Payment : "paid by"
+  Product ||--o{ OrderItem : "ordered as"
+  VendorProfile ||--o{ OrderItem : "fulfills"
+  VendorProfile ||--o{ CommissionRecord : "earns"
+  OrderItem ||--o| CommissionRecord : "generates"
+  CommissionSetting ||--o{ CommissionRecord : "rate source"
+  Order {
+    int Id PK
+    string OrderNumber UK
+    string CustomerId FK
+    string Status
+    decimal TotalAmount
+    string Currency
+    datetime2 PaidAt
+  }
+  OrderItem {
+    int Id PK
+    int OrderId FK
+    int ProductId FK
+    int VendorProfileId FK
+    string ProductNameSnapshot
+    decimal UnitPrice
+    int Quantity
+    decimal LineTotal
+    string FulfillmentStatus
+  }
+  Payment {
+    int Id PK
+    int OrderId FK
+    string StripeCheckoutSessionId UK
+    string StripePaymentIntentId
+    decimal Amount
+    string Status
+  }
+  StripeWebhookEvent {
+    int Id PK
+    string StripeEventId UK
+    string EventType
+    datetime2 ProcessedAt
+  }
+  CommissionSetting {
+    int Id PK
+    decimal RatePercent
+    datetime2 EffectiveFrom
+    bool IsActive
+  }
+  CommissionRecord {
+    int Id PK
+    int OrderItemId FK
+    int VendorProfileId FK
+    int CommissionSettingId FK
+    decimal GrossAmount
+    decimal RatePercentSnapshot
+    decimal CommissionAmount
+    decimal VendorNetAmount
+    string Status
+  }
+  ApplicationUser {
+    string Id PK
+  }
+  Product {
+    int Id PK
+  }
+  VendorProfile {
+    int Id PK
+  }

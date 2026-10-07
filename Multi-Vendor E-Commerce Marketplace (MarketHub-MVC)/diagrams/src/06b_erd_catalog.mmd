@@ -1,0 +1,58 @@
+erDiagram
+  ApplicationUser ||--o| VendorProfile : "owns"
+  ApplicationUser ||--o{ CartItem : "has"
+  ApplicationUser ||--o{ Review : "writes"
+  VendorProfile ||--o{ Product : "sells"
+  Category ||--o{ Product : "groups"
+  Product ||--o{ ProductImage : "has"
+  Product ||--o{ CartItem : "in cart"
+  Product ||--o{ Review : "receives"
+  ApplicationUser {
+    string Id PK
+    string Email UK
+    string FullName
+    bool IsActive
+  }
+  VendorProfile {
+    int Id PK
+    string UserId FK
+    string StoreName UK
+    string Status
+    string RejectionReason
+    datetime2 ReviewedAt
+  }
+  Category {
+    int Id PK
+    string Name UK
+    string Slug UK
+    bool IsActive
+  }
+  Product {
+    int Id PK
+    int VendorProfileId FK
+    int CategoryId FK
+    string Name
+    decimal Price
+    int StockQuantity
+    bool IsActive
+    rowversion RowVersion
+  }
+  ProductImage {
+    int Id PK
+    int ProductId FK
+    string ImagePath
+    bool IsPrimary
+  }
+  CartItem {
+    int Id PK
+    string CustomerId FK
+    int ProductId FK
+    int Quantity
+  }
+  Review {
+    int Id PK
+    int ProductId FK
+    string CustomerId FK
+    int Rating
+    string Comment
+  }

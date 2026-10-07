@@ -1,0 +1,31 @@
+flowchart TB
+  Browser["Browser<br/>HTML + CSS + JS + Bootstrap"]
+  subgraph WebApp["MarketHub.Web  (ASP.NET Core MVC, .NET 10)"]
+    direction TB
+    MW["Middleware Pipeline<br/>HTTPS, Static Files, Routing,<br/>Authentication, Authorization"]
+    subgraph Pres["Presentation Layer"]
+      Ctrl["Controllers<br/>Home, Products, Cart, Checkout, Orders, Webhooks"]
+      Areas["Areas<br/>Vendor, Admin"]
+      Views["Views + ViewModels"]
+    end
+    subgraph App["Application Layer"]
+      Svc["Services<br/>Product, Cart, Checkout, Order,<br/>Payment, Commission, Vendor"]
+    end
+    subgraph Data["Data Layer"]
+      Ctx["ApplicationDbContext<br/>(EF Core)"]
+      Ent["Entities + Configurations + Migrations"]
+    end
+    Ident["ASP.NET Core Identity"]
+  end
+  SQL[("SQL Server")]
+  Stripe{{"Stripe API"}}
+  Browser --> MW --> Ctrl
+  MW --> Areas
+  Ctrl --> Svc
+  Areas --> Svc
+  Ctrl --> Views
+  Svc --> Ctx --> SQL
+  Ctx --- Ent
+  Svc --> Stripe
+  Stripe -. "Webhook" .-> Ctrl
+  MW --> Ident --> Ctx

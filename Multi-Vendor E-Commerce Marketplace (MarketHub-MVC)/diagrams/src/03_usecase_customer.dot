@@ -1,0 +1,35 @@
+digraph G {
+rankdir=LR; fontname="DejaVu Sans"; labelloc=t; fontsize=20;
+label="Customer Use Case Diagram";
+node [fontname="DejaVu Sans", fontsize=11]; edge [fontname="DejaVu Sans", fontsize=9];
+Customer [shape=box, style="filled,rounded", fillcolor="#FFF3CD", label="«actor»\nCustomer", width=1.4];
+Stripe [shape=box, style="filled,rounded", fillcolor="#FFF3CD", label="«actor»\nStripe (external)", width=1.4];
+subgraph cluster_sys { label="MarketHub-MVC"; style="rounded"; color="#444444"; fontsize=14;
+UC01 [shape=ellipse, style=filled, fillcolor="#E3F2FD", label="UC-01 Browse Products"];
+UC02 [shape=ellipse, style=filled, fillcolor="#E3F2FD", label="UC-02 Search, Filter, Sort"];
+UC03 [shape=ellipse, style=filled, fillcolor="#E3F2FD", label="UC-03 View Product Details"];
+UC07 [shape=ellipse, style=filled, fillcolor="#E3F2FD", label="UC-07 Manage Shopping Cart"];
+UC08 [shape=ellipse, style=filled, fillcolor="#E3F2FD", label="UC-08 Checkout"];
+UC09 [shape=ellipse, style=filled, fillcolor="#E3F2FD", label="UC-09 Pay with Stripe"];
+UC10 [shape=ellipse, style=filled, fillcolor="#E3F2FD", label="UC-10 View Order History"];
+UC11 [shape=ellipse, style=filled, fillcolor="#E3F2FD", label="UC-11 Cancel Pending Order"];
+UC12 [shape=ellipse, style=filled, fillcolor="#E3F2FD", label="UC-12 Write Product Review"];
+UC13 [shape=ellipse, style=filled, fillcolor="#E3F2FD", label="UC-13 Manage Profile"];
+UC31 [shape=ellipse, style=filled, fillcolor="#E3F2FD", label="UC-31 Process Stripe Webhook"];
+}
+Customer -> UC01 [arrowhead=none];
+Customer -> UC02 [arrowhead=none];
+Customer -> UC03 [arrowhead=none];
+Customer -> UC07 [arrowhead=none];
+Customer -> UC08 [arrowhead=none];
+Customer -> UC09 [arrowhead=none];
+Customer -> UC10 [arrowhead=none];
+Customer -> UC11 [arrowhead=none];
+Customer -> UC12 [arrowhead=none];
+Customer -> UC13 [arrowhead=none];
+Stripe -> UC31 [arrowhead=none];
+UC08 -> UC09 [style=dashed,label="«include»"];
+UC09 -> UC31 [style=dashed,label="«include»"];
+UC12 -> UC10 [style=dashed,label="«precondition: delivered item»"];
+
+}
