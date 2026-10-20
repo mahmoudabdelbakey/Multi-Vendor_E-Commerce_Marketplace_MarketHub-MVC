@@ -24,7 +24,7 @@ namespace BankVault.Transactions
         {
 
             ValidateAmount(amount);
-            if(amount < account.Balance)
+            if(amount > account.Balance)
             {
                 throw new InsufficientFundsException("You Can't Withdraw this amount !!");
 
