@@ -1,1 +1,51 @@
-[]
+[
+  {
+    "AccountNumber": "1001",
+    "OwnerName": "’Mahmoud",
+    "Balance": 1000,
+    "Type": "Savings",
+    "OpenedDate": "2026-10-21T03:06:27.1169146-09:00"
+  },
+  {
+    "AccountNumber": "1002",
+    "OwnerName": "Ahmed",
+    "Balance": 1250,
+    "Type": "Savings",
+    "OpenedDate": "2026-10-21T03:06:27.1172343-09:00"
+  },
+  {
+    "AccountNumber": "1003",
+    "OwnerName": "Hafez",
+    "Balance": 1000,
+    "Type": "Savings",
+    "OpenedDate": "2026-10-21T03:06:27.117246-09:00"
+  },
+  {
+    "AccountNumber": "1005",
+    "OwnerName": "Fathy",
+    "Balance": 5000,
+    "Type": "Current",
+    "OpenedDate": "2026-10-21T03:06:27.1172463-09:00"
+  },
+  {
+    "AccountNumber": "1006",
+    "OwnerName": "Mena",
+    "Balance": 100,
+    "Type": "Current",
+    "OpenedDate": "2026-10-21T03:06:27.1172463-09:00"
+  },
+  {
+    "AccountNumber": "1007",
+    "OwnerName": "Maher",
+    "Balance": 800,
+    "Type": "Current",
+    "OpenedDate": "2026-10-21T03:06:27.1172463-09:00"
+  },
+  {
+    "AccountNumber": "1008",
+    "OwnerName": "Omer",
+    "Balance": 900,
+    "Type": "Current",
+    "OpenedDate": "2026-10-21T03:06:27.1172463-09:00"
+  }
+]
