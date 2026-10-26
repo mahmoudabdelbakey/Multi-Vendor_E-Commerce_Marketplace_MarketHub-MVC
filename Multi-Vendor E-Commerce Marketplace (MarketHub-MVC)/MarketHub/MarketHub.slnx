@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="MarketHub.BLL/MarketHub.BLL.csproj" />
+  <Project Path="MarketHub.DAL/MarketHub.DAL.csproj" />
+  <Project Path="MarketHub.MVC/MarketHub.MVC.csproj" />
+</Solution>
