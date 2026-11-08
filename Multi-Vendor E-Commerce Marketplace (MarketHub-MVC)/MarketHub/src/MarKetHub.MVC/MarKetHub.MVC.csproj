@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>markethub-mvc-9b1f3c7e</UserSecretsId>
+    <RootNamespace>MarketHub.MVC</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MarKetHub.BLL\MarKetHub.BLL.csproj" />
+    <ProjectReference Include="..\MarKetHub.DAL\MarKetHub.DAL.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Lets "dotnet ef" use this project as the startup project (the migrations live in MarKetHub.DAL). -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.13">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="wwwroot\uploads\**" CopyToPublishDirectory="Never" />
+  </ItemGroup>
+
+</Project>

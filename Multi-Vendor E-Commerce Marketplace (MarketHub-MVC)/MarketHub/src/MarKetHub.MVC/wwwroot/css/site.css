@@ -1,0 +1,82 @@
+:root {
+    --mh-accent: #4f46e5;
+}
+
+body {
+    background-color: #f8f9fa;
+}
+
+.hero {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+}
+
+.product-card {
+    transition: transform .12s ease, box-shadow .12s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .12) !important;
+}
+
+.product-thumb {
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    background: #e9ecef;
+}
+
+.product-main {
+    max-height: 28rem;
+    object-fit: contain;
+    background: #fff;
+}
+
+.thumb-small {
+    width: 4rem;
+    height: 4rem;
+    object-fit: cover;
+    cursor: pointer;
+    background: #e9ecef;
+}
+
+.stat-card .h4 {
+    font-variant-numeric: tabular-nums;
+}
+
+/* Pure-CSS bar chart (admin dashboard). */
+.bar-chart {
+    display: flex;
+    align-items: stretch;
+    gap: .5rem;
+    height: 14rem;
+}
+
+.bar-col {
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    min-width: 0;
+}
+
+.bar-col .bar {
+    width: 100%;
+    background: var(--mh-accent);
+    border-radius: .25rem .25rem 0 0;
+    min-height: 2px;
+}
+
+.bar-value {
+    white-space: nowrap;
+    font-size: .7rem;
+}
+
+.field-validation-error,
+.validation-summary-errors {
+    font-size: .875rem;
+}
+
+.input-validation-error {
+    border-color: #dc3545;
+}

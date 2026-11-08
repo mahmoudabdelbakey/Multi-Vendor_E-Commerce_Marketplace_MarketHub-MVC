@@ -1,0 +1,18 @@
+@{
+    ViewData["Title"] = "Home";
+}
+@* PLACEHOLDER (Member A). Member B replaces this page with the real home page: categories + latest products. *@
+<div class="text-center py-5">
+    <h1 class="display-5 fw-bold">Welcome to MarketHub</h1>
+    <p class="lead text-muted">A multi-vendor marketplace. The storefront arrives in week 1 (Member B).</p>
+
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <p>You are signed in as <strong>@User.Identity.Name</strong>.</p>
+    }
+    else
+    {
+        <a class="btn btn-primary" asp-controller="Account" asp-action="Login">Log in</a>
+        <a class="btn btn-outline-primary" asp-controller="Account" asp-action="Register">Sign up</a>
+    }
+</div>

@@ -1,4 +1,12 @@
-**/bin/
-**/obj/
-**/.vs/
+bin/
+obj/
+.vs/
 *.user
+*.suo
+# Secrets: never commit them. Use "dotnet user-secrets" or environment variables.
+appsettings.Production.json
+appsettings.*.local.json
+.env
+# Uploaded product images (the folder itself is kept through .gitkeep)
+src/MarKetHub.MVC/wwwroot/uploads/*
+!src/MarKetHub.MVC/wwwroot/uploads/.gitkeep

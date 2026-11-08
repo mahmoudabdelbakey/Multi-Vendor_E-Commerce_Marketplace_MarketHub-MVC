@@ -1,5 +1,7 @@
 <Solution>
-  <Project Path="MarketHub.BLL/MarketHub.BLL.csproj" />
-  <Project Path="MarketHub.DAL/MarketHub.DAL.csproj" />
-  <Project Path="MarketHub.MVC/MarketHub.MVC.csproj" />
+  <Folder Name="/src/">
+    <Project Path="src/MarKetHub.BLL/MarKetHub.BLL.csproj" />
+    <Project Path="src/MarKetHub.DAL/MarKetHub.DAL.csproj" />
+    <Project Path="src/MarKetHub.MVC/MarKetHub.MVC.csproj" />
+  </Folder>
 </Solution>
