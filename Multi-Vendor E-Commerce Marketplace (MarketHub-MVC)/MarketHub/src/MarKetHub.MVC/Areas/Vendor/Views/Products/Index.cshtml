@@ -1,0 +1,102 @@
+@model PagedResult<ProductManageDto>
+@{
+    ViewData["Title"] = "My products";
+}
+
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+    <h1 class="h3 mb-0">My products</h1>
+    <a class="btn btn-primary" asp-area="Vendor" asp-controller="Products" asp-action="Create">Add product</a>
+</div>
+
+@if (Model.TotalCount == 0)
+{
+    <div class="card card-body text-center py-5">
+        <p class="lead mb-2">You have no products yet.</p>
+        <p class="text-muted mb-3">Add your first product and it will appear in the store.</p>
+        <div><a class="btn btn-primary" asp-area="Vendor" asp-controller="Products" asp-action="Create">Add your first product</a></div>
+    </div>
+}
+else
+{
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col" style="width: 5rem;"></th>
+                        <th scope="col">Product</th>
+                        <th scope="col">Category</th>
+                        <th scope="col" class="text-end">Price</th>
+                        <th scope="col" class="text-end">Stock</th>
+                        <th scope="col">Status</th>
+                        <th scope="col" class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var p in Model.Items)
+                {
+                    <tr>
+                        <td>
+                            <img src="@ImageUrl(p.ImagePath)" alt="" class="product-thumb rounded" style="width: 4rem; height: 3rem;" />
+                        </td>
+                        <td class="fw-semibold">@p.Name</td>
+                        <td>@p.CategoryName</td>
+                        <td class="text-end">@Money(p.Price)</td>
+                        <td class="text-end">
+                            @if (p.StockQuantity == 0)
+                            {
+                                <span class="badge text-bg-danger">Out of stock</span>
+                            }
+                            else if (p.StockQuantity <= 5)
+                            {
+                                <span class="badge text-bg-warning">@p.StockQuantity left</span>
+                            }
+                            else
+                            {
+                                @p.StockQuantity
+                            }
+                        </td>
+                        <td>
+                            @if (p.IsActive)
+                            {
+                                <span class="badge text-bg-success">Visible</span>
+                            }
+                            else
+                            {
+                                <span class="badge text-bg-secondary">Hidden</span>
+                            }
+                        </td>
+                        <td class="text-end text-nowrap">
+                            <a class="btn btn-sm btn-outline-primary" asp-area="Vendor" asp-controller="Products" asp-action="Edit" asp-route-id="@p.Id">Edit</a>
+                            <form asp-area="Vendor" asp-controller="Products" asp-action="Delete" asp-route-id="@p.Id" method="post" class="d-inline"
+                                  data-confirm="Delete &quot;@p.Name&quot;? A product that already has orders is hidden instead of deleted.">
+                                <input type="hidden" name="page" value="@Model.Page" />
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-3">
+        <span class="text-muted small">
+            @Model.TotalCount @(Model.TotalCount == 1 ? "product" : "products") - page @Model.Page of @Math.Max(1, Model.TotalPages)
+        </span>
+        @if (Model.TotalPages > 1)
+        {
+            <nav aria-label="Products pages">
+                <ul class="pagination mb-0">
+                    <li class="page-item @(Model.HasPrevious ? "" : "disabled")">
+                        <a class="page-link" asp-area="Vendor" asp-controller="Products" asp-action="Index" asp-route-page="@(Model.Page - 1)">Previous</a>
+                    </li>
+                    <li class="page-item @(Model.HasNext ? "" : "disabled")">
+                        <a class="page-link" asp-area="Vendor" asp-controller="Products" asp-action="Index" asp-route-page="@(Model.Page + 1)">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        }
+    </div>
+}

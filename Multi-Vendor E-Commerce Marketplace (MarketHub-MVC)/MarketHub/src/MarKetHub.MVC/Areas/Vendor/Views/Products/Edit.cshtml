@@ -1,0 +1,25 @@
+@model ProductFormViewModel
+@{
+    ViewData["Title"] = "Edit product";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <h1 class="h3 mb-3">Edit product</h1>
+
+        <form asp-area="Vendor" asp-controller="Products" asp-action="Edit" asp-route-id="@Model.Id" method="post"
+              enctype="multipart/form-data" class="card card-body" data-once>
+            @* The version of the product this form was opened with: lets the service detect a concurrent edit (TASK-35). *@
+            <input asp-for="RowVersion" type="hidden" />
+
+            <partial name="_Form" model="Model" />
+
+            <div class="d-flex gap-2">
+                <button class="btn btn-primary" type="submit">Save changes</button>
+                <a class="btn btn-outline-secondary" asp-area="Vendor" asp-controller="Products" asp-action="Index">Back to my products</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

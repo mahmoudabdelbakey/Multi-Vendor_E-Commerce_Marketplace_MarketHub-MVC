@@ -1,5 +1,6 @@
 using MarketHub.BLL.Interfaces;
 using MarketHub.BLL.Services;
+using MarketHub.MVC.Infrastructure.Dev;
 
 namespace MarketHub.MVC.Infrastructure.Features;
 
@@ -22,6 +23,9 @@ public static class VendorProductsFeature
 
         services.AddSingleton<IFileStorage, LocalFileStorage>();
         services.AddScoped<IProductService, ProductService>();
+
+        // TEMPORARY (TASK-19): removed in TASK-48 when ICatalogService exists.
+        services.AddScoped<IVendorCategoryOptions, DevVendorCategoryOptions>();
 
         return services;
     }
