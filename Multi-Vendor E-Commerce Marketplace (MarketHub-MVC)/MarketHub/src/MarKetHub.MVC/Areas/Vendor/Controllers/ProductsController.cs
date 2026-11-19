@@ -143,6 +143,25 @@ public class ProductsController : VendorControllerBase
         return RedirectToAction(nameof(Index));
     }
 
+    // ------------------------------------------------------------------ images (TASK-34)
+    // Uploading new images is part of the Create / Edit forms. These two actions change the images that already exist.
+    // They never touch the Product row, so they do not clash with a form that is open in another tab (RowVersion).
+
+    [HttpPost]
+    public async Task<IActionResult> SetPrimaryImage([FromRoute] int id, int imageId, CancellationToken ct)
+    {
+        var result = await _products.SetPrimaryImageAsync(VendorId, id, imageId, ct);
+        return RedirectWithResult(result, nameof(Edit), new { id });
+    }
+
+    /// <summary>The service deletes the database row first and the file from the storage only after that succeeded.</summary>
+    [HttpPost]
+    public async Task<IActionResult> DeleteImage([FromRoute] int id, int imageId, CancellationToken ct)
+    {
+        var result = await _products.DeleteImageAsync(VendorId, id, imageId, ct);
+        return RedirectWithResult(result, nameof(Edit), new { id });
+    }
+
     // ------------------------------------------------------------------ delete
 
     /// <summary>
