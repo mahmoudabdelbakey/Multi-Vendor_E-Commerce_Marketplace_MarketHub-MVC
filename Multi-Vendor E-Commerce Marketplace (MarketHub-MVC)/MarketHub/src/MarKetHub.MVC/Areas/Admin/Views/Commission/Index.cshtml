@@ -1,0 +1,94 @@
+@using MarketHub.BLL.Models
+@{
+    ViewData["Title"] = "Commission Settings";
+    var current = ViewBag.CurrentRate as CommissionSettingDto;
+    var history = ViewBag.History as IReadOnlyList<CommissionSettingDto>;
+}
+
+<div class="container mt-4">
+    <h2>Commission Settings</h2>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5>Current Rate</h5>
+        </div>
+        <div class="card-body">
+            @if (current != null)
+            {
+                <p><strong>Rate:</strong> @current.RatePercent%</p>
+                <p><strong>Effective From:</strong> @current.EffectiveFrom.ToString("yyyy-MM-dd HH:mm")</p>
+            }
+            else
+            {
+                <p>No active commission rate set.</p>
+            }
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5>Change Rate</h5>
+        </div>
+        <div class="card-body">
+            <form asp-action="SetRate" method="post">
+                <div class="mb-3">
+                    <label class="form-label">New Rate (%)</label>
+                    <input type="number" name="ratePercent" class="form-control" min="0" max="100" step="0.01" required />
+                </div>
+                <button type="submit" class="btn btn-primary">Update Rate</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h5>Rate History</h5>
+        </div>
+        <div class="card-body">
+            @if (history != null && history.Any())
+            {
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Rate</th>
+                            <th>Effective From</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in history)
+                        {
+                            <tr>
+                                <td>@item.RatePercent%</td>
+                                <td>@item.EffectiveFrom.ToString("yyyy-MM-dd HH:mm")</td>
+                                <td>
+                                    @if (item.IsActive)
+                                    {
+                                        <span class="badge bg-success">Active</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Inactive</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p>No history available.</p>
+            }
+        </div>
+    </div>
+</div>
