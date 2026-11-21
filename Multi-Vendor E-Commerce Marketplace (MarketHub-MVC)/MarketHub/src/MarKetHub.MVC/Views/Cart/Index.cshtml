@@ -1,0 +1,98 @@
+@model CartDto
+
+@{
+    ViewData["Title"] = "Your cart";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="mb-0">Your cart</h1>
+    <span class="text-muted">@Model.ItemCount item(s)</span>
+</div>
+
+@if (Model.IsEmpty)
+{
+    <div class="text-center border rounded p-5">
+        <h2 class="h4">Your cart is empty</h2>
+        <p class="text-muted">Add a product to see it here.</p>
+        <a class="btn btn-primary" asp-controller="Home" asp-action="Index">Continue shopping</a>
+    </div>
+}
+else
+{
+    @if (Model.HasUnavailable)
+    {
+        <div class="alert alert-warning" role="alert">
+            Some items are unavailable or exceed current stock. They are not included in the total.
+        </div>
+    }
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            @foreach (var item in Model.Items)
+            {
+                var imageSrc = string.IsNullOrWhiteSpace(item.ImagePath)
+                    ? Url.Content("~/img/placeholder.svg")
+                    : Url.Content("~/" + item.ImagePath.TrimStart('/'));
+
+                <article class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex flex-column flex-sm-row gap-3">
+                            <img src="@imageSrc" alt="@item.ProductName"
+                                 class="rounded border"
+                                 style="width: 96px; height: 96px; object-fit: cover;" />
+
+                            <div class="flex-grow-1">
+                                <h2 class="h5 mb-1">@item.ProductName</h2>
+                                <p class="text-muted mb-2">@item.StoreName</p>
+                                <p class="mb-1">Unit price: @item.UnitPrice.ToString("C")</p>
+                                <p class="mb-1">In stock: @item.StockQuantity</p>
+                                <p class="mb-2">Line total: @item.LineTotal.ToString("C")</p>
+
+                                @if (!item.IsAvailable)
+                                {
+                                    <p class="text-danger mb-3">@item.UnavailableReason</p>
+                                }
+
+                                <div class="d-flex flex-wrap align-items-end gap-2">
+                                    <form asp-action="UpdateQuantity" method="post"
+                                          class="d-flex align-items-end gap-2">
+                                        <input type="hidden" name="CartItemId" value="@item.Id" />
+                                        <div>
+                                            <label class="form-label mb-1" for="quantity-@item.Id">Quantity</label>
+                                            <input class="form-control" id="quantity-@item.Id"
+                                                   type="number" name="Quantity" value="@item.Quantity"
+                                                   min="1" max="99" required style="width: 100px;" />
+                                        </div>
+                                        <button type="submit" class="btn btn-outline-primary">Update</button>
+                                    </form>
+
+                                    <form asp-action="Remove" method="post">
+                                        <input type="hidden" name="CartItemId" value="@item.Id" />
+                                        <button type="submit" class="btn btn-outline-danger">Remove</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            }
+        </div>
+
+        <aside class="col-lg-4">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="h5">Summary</h2>
+                    <p class="d-flex justify-content-between">
+                        <span>Purchasable total</span>
+                        <strong>@Model.Total.ToString("C")</strong>
+                    </p>
+                    <p class="small text-muted">
+                        Unavailable items are excluded. Checkout will be added in a later task.
+                    </p>
+                    <a class="btn btn-outline-secondary w-100"
+                       asp-controller="Home" asp-action="Index">Continue shopping</a>
+                </div>
+            </div>
+        </aside>
+    </div>
+}
