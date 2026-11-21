@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using MarketHub.BLL.Interfaces;
 using MarketHub.MVC.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -6,13 +7,28 @@ using Microsoft.AspNetCore.Mvc;
 namespace MarketHub.MVC.Controllers;
 
 /// <summary>
-/// PLACEHOLDER from Member A so that the site opens and the error re-execution path works.
-/// Member B owns this controller and replaces Index (week 1) and the Error / Status pages (week 2).
+/// Home page and error handling.
 /// </summary>
 [AllowAnonymous]
 public class HomeController : AppControllerBase
 {
-    public IActionResult Index() => View();
+    private readonly ICatalogService _catalogService;
+
+    public HomeController(ICatalogService catalogService)
+    {
+        _catalogService = catalogService;
+    }
+
+    public async Task<IActionResult> Index()
+    {
+        var model = new HomeViewModel
+        {
+            Categories = await _catalogService.GetActiveCategoriesAsync(),
+            LatestProducts = await _catalogService.GetFeaturedAsync(8)
+        };
+
+        return View(model);
+    }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error() =>

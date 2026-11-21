@@ -1,0 +1,180 @@
+﻿@model MarketHub.BLL.Common.PagedResult<MarketHub.BLL.Models.ProductListItemDto>
+
+@{
+    ViewData["Title"] = "Products";
+
+    var categories = ViewBag.Categories as IEnumerable<MarketHub.BLL.Models.CategoryDto>
+        ?? Enumerable.Empty<MarketHub.BLL.Models.CategoryDto>();
+
+    var search = Context.Request.Query["Search"].ToString();
+    var categoryId = Context.Request.Query["CategoryId"].ToString();
+    var minPrice = Context.Request.Query["MinPrice"].ToString();
+    var maxPrice = Context.Request.Query["MaxPrice"].ToString();
+    var sort = Context.Request.Query["Sort"].ToString();
+
+    if (string.IsNullOrWhiteSpace(sort))
+        sort = "newest";
+}
+
+<div class="catalog-header mb-4">
+    <h1 class="fw-bold mb-2">Explore Products</h1>
+    <p class="text-muted mb-0">
+        Discover products from our marketplace.
+    </p>
+</div>
+
+<div class="card shadow-sm border-0 mb-4">
+    <div class="card-body">
+        <form method="get" action="/Products">
+            <div class="row g-3 align-items-end">
+
+                <div class="col-md-4">
+                    <label for="Search" class="form-label fw-semibold">
+                        Search
+                    </label>
+
+                    <input type="text"
+                           id="Search"
+                           name="Search"
+                           value="@search"
+                           class="form-control"
+                           placeholder="Search products..." />
+                </div>
+
+                <div class="col-md-2">
+                    <label for="CategoryId" class="form-label fw-semibold">
+                        Category
+                    </label>
+
+                    <select id="CategoryId"
+                            name="CategoryId"
+                            class="form-select">
+
+                        <option value="">All Categories</option>
+
+                        @foreach (var category in categories)
+                        {
+                            <option value="@category.Id"
+                                    selected="@(categoryId == category.Id.ToString())">
+                                @category.Name
+                            </option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label for="MinPrice" class="form-label fw-semibold">
+                        Min Price
+                    </label>
+
+                    <input type="number"
+                           step="0.01"
+                           min="0"
+                           id="MinPrice"
+                           name="MinPrice"
+                           value="@minPrice"
+                           class="form-control"
+                           placeholder="Min" />
+                </div>
+
+                <div class="col-md-2">
+                    <label for="MaxPrice" class="form-label fw-semibold">
+                        Max Price
+                    </label>
+
+                    <input type="number"
+                           step="0.01"
+                           min="0"
+                           id="MaxPrice"
+                           name="MaxPrice"
+                           value="@maxPrice"
+                           class="form-control"
+                           placeholder="Max" />
+                </div>
+
+                <div class="col-md-2">
+                    <label for="Sort" class="form-label fw-semibold">
+                        Sort By
+                    </label>
+
+                    <select id="Sort"
+                            name="Sort"
+                            class="form-select">
+
+                        <option value="newest" selected="@(sort == "newest")">
+                            Newest
+                        </option>
+
+                        <option value="price_asc" selected="@(sort == "price_asc")">
+                            Price: Low to High
+                        </option>
+
+                        <option value="price_desc" selected="@(sort == "price_desc")">
+                            Price: High to Low
+                        </option>
+
+                        <option value="name" selected="@(sort == "name")">
+                            Name A-Z
+                        </option>
+                    </select>
+                </div>
+
+                <div class="col-12 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-search"></i>
+                        Apply Filters
+                    </button>
+
+                    <a href="/Products" class="btn btn-outline-secondary">
+                        Clear Filters
+                    </a>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+    <h5 class="mb-0">
+        Products
+    </h5>
+
+    <span class="text-muted">
+        @Model.TotalCount product(s) found
+    </span>
+</div>
+
+@if (Model.Items == null || !Model.Items.Any())
+{
+    <div class="card border-0 shadow-sm">
+        <div class="card-body text-center py-5">
+            <h4>No products found</h4>
+
+            <p class="text-muted">
+                Try changing your search or filters.
+            </p>
+
+            <a href="/Products" class="btn btn-primary">
+                View All Products
+            </a>
+        </div>
+    </div>
+}
+else
+{
+    <div class="row g-4">
+
+        @foreach (var product in Model.Items)
+        {
+            <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+                <partial name="_ProductCard" model="product" />
+            </div>
+        }
+
+    </div>
+
+    <div class="mt-4">
+        <partial name="_Pager" model="Model" />
+    </div>
+}

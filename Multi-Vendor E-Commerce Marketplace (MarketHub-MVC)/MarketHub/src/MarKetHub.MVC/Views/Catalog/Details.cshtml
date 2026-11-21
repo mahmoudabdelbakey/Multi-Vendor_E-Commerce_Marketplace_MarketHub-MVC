@@ -1,0 +1,268 @@
+﻿@model MarketHub.BLL.Models.ProductDetailsDto
+
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<div class="container py-4">
+
+    <!-- Back link -->
+    <div class="mb-4">
+        <a href="/Products" class="text-decoration-none text-secondary">
+            &larr; Back to Products
+        </a>
+    </div>
+
+    <!-- Product Details -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-5">
+        <div class="row g-0">
+
+            <!-- Images -->
+            <div class="col-md-6 bg-white p-4">
+                @if (Model.Images == null || !Model.Images.Any())
+                {
+                    <div class="d-flex align-items-center justify-content-center bg-light rounded-3"
+                         style="min-height:400px;">
+                        <div class="text-center text-secondary">
+                            <div class="fs-1 mb-3">&#128247;</div>
+                            <p class="mb-0">No image available</p>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    var primaryImage = Model.Images.FirstOrDefault(i => i.IsPrimary)
+                                      ?? Model.Images.First();
+
+                    <div class="text-center mb-3">
+                        <img src="@primaryImage.Path"
+                             alt="@Model.Name"
+                             class="img-fluid rounded-3"
+                             style="max-height:400px; object-fit:contain;" />
+                    </div>
+
+                    <div class="d-flex flex-wrap gap-3 justify-content-center">
+                        @foreach (var image in Model.Images)
+                        {
+                            <img src="@image.Path"
+                                 alt="@Model.Name"
+                                 class="rounded border p-1"
+                                 style="width:80px;height:80px;object-fit:cover;" />
+                        }
+                    </div>
+                }
+            </div>
+
+            <!-- Product Info -->
+            <div class="col-md-6 p-4 p-lg-5">
+                <span class="badge bg-light text-primary mb-3">
+                    @Model.CategoryName
+                </span>
+
+                <h1 class="fw-bold mb-3">@Model.Name</h1>
+
+                <h2 class="text-primary fw-bold mb-4">
+                    $@Model.Price.ToString("N2")
+                </h2>
+
+                <div class="mb-4">
+                    @if (Model.StockQuantity > 0)
+                    {
+                        <span class="badge bg-success-subtle text-success px-3 py-2">
+                            In Stock (@Model.StockQuantity)
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger-subtle text-danger px-3 py-2">
+                            Out of Stock
+                        </span>
+                    }
+                </div>
+
+                <hr />
+
+                <h5 class="fw-semibold mb-3">Description</h5>
+
+                <p class="text-secondary">
+                    @(Model.Description ?? "No description available.")
+                </p>
+
+                <hr />
+
+                <div class="mb-3">
+                    <span class="text-secondary">Sold by:</span>
+                    <strong class="ms-2">@Model.StoreName</strong>
+                </div>
+
+                <div class="mb-4">
+                    <span class="text-secondary">Category:</span>
+                    <strong class="ms-2">@Model.CategoryName</strong>
+                </div>
+
+                <a href="/Products"
+                   class="btn btn-outline-primary px-4">
+                    Continue Shopping
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reviews -->
+    <div id="reviews" class="card border-0 shadow-sm rounded-4 p-4 p-lg-5">
+
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+            <h2 class="fw-bold mb-0">Customer Reviews</h2>
+
+            <div class="text-end">
+                <div class="text-warning fs-4">
+                    @if (Model.ReviewCount > 0)
+                    {
+                        <span>&#9733;</span>
+                        @Model.AverageRating.ToString("0.0")
+                        <span class="text-secondary fs-6">/ 5</span>
+                    }
+                    else
+                    {
+                        <span class="text-secondary fs-6">No ratings yet</span>
+                    }
+                </div>
+
+                <small class="text-secondary">
+                    @Model.ReviewCount review(s)
+                </small>
+            </div>
+        </div>
+
+        <!-- Review Messages -->
+        @if (TempData["ReviewSuccess"] != null)
+        {
+            <div class="alert alert-success">
+                @TempData["ReviewSuccess"]
+            </div>
+        }
+
+        @if (TempData["ReviewError"] != null)
+        {
+            <div class="alert alert-danger">
+                @TempData["ReviewError"]
+            </div>
+        }
+
+        <!-- Add Review Form -->
+        <div class="bg-light rounded-4 p-4 mb-4">
+            <h4 class="fw-semibold mb-3">Write a Review</h4>
+
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <form asp-controller="Reviews"
+                      asp-action="Add"
+                      method="post">
+
+                    <input type="hidden" name="productId" value="@Model.Id" />
+
+                    <div class="mb-3">
+                        <label for="rating" class="form-label fw-semibold">
+                            Rating
+                        </label>
+
+                        <select id="rating"
+                                name="rating"
+                                class="form-select"
+                                required>
+                            <option value="">Choose your rating</option>
+                            <option value="5">5 - Excellent</option>
+                            <option value="4">4 - Very Good</option>
+                            <option value="3">3 - Good</option>
+                            <option value="2">2 - Fair</option>
+                            <option value="1">1 - Poor</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="comment" class="form-label fw-semibold">
+                            Comment (Optional)
+                        </label>
+
+                        <textarea id="comment"
+                                  name="comment"
+                                  class="form-control"
+                                  rows="4"
+                                  maxlength="1000"
+                                  placeholder="Share your experience with this product..."></textarea>
+
+                        <small class="text-secondary">
+                            Maximum 1000 characters.
+                        </small>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary px-4">
+                        Submit Review
+                    </button>
+                </form>
+            }
+            else
+            {
+                <p class="text-secondary mb-0">
+                    Please
+                    <a asp-controller="Account"
+                       asp-action="Login"
+                       asp-route-returnUrl="@Context.Request.Path">
+                        log in
+                    </a>
+                    to write a review.
+                </p>
+            }
+        </div>
+
+        <!-- Existing Reviews -->
+        @if (Model.Reviews == null || !Model.Reviews.Any())
+        {
+            <div class="text-center bg-light rounded-3 py-5">
+                <div class="fs-1 text-secondary mb-2">&#128172;</div>
+                <h5>No reviews yet</h5>
+                <p class="text-secondary mb-0">
+                    Be the first to review this product.
+                </p>
+            </div>
+        }
+        else
+        {
+            <div class="d-flex flex-column gap-3">
+                @foreach (var review in Model.Reviews)
+                {
+                    <div class="border rounded-3 p-3">
+                        <div class="d-flex justify-content-between flex-wrap gap-2 mb-2">
+                            <strong>@review.CustomerName</strong>
+
+                            <small class="text-secondary">
+                                @review.CreatedAt.ToString("dd MMM yyyy")
+                            </small>
+                        </div>
+
+                        <div class="text-warning mb-2">
+                            @for (int i = 0; i < review.Rating; i++)
+                            {
+                                <span>&#9733;</span>
+                            }
+
+                            @for (int i = review.Rating; i < 5; i++)
+                            {
+                                <span class="text-secondary">&#9734;</span>
+                            }
+
+                            <span class="text-secondary small ms-1">
+                                (@review.Rating/5)
+                            </span>
+                        </div>
+
+                        <p class="text-secondary mb-0">
+                            @(review.Comment ?? "No comment provided.")
+                        </p>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+</div>
