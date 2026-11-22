@@ -19,6 +19,57 @@
                 <a class="btn btn-outline-secondary" asp-area="Vendor" asp-controller="Products" asp-action="Index">Back to my products</a>
             </div>
         </form>
+
+        @* Image management (TASK-34). Outside the form above on purpose: every button here is its own small POST form. *@
+        <div class="card card-body mt-3" id="images">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+                <h2 class="h5 mb-0">Product images</h2>
+                <span class="text-muted small">@Model.ExistingImages.Count of 8</span>
+            </div>
+            <p class="text-muted small">
+                Choosing a main image or deleting an image is saved immediately.
+                New images are uploaded with the form above when you press "Save changes".
+            </p>
+
+            @if (Model.ExistingImages.Count == 0)
+            {
+                <p class="text-muted mb-0">This product has no images yet.</p>
+            }
+            else
+            {
+                <div class="row g-3">
+                    @foreach (var image in Model.ExistingImages)
+                    {
+                        <div class="col-6 col-md-4">
+                            <div class="card h-100 @(image.IsPrimary ? "border-primary" : "")">
+                                <div class="position-relative">
+                                    <img src="@ImageUrl(image.Path)" alt="Product image" class="card-img-top"
+                                         style="aspect-ratio: 1 / 1; object-fit: cover;" />
+                                    @if (image.IsPrimary)
+                                    {
+                                        <span class="badge text-bg-primary position-absolute top-0 start-0 m-2">Main image</span>
+                                    }
+                                </div>
+                                <div class="card-body p-2 d-flex flex-wrap gap-2">
+                                    @if (!image.IsPrimary)
+                                    {
+                                        <form asp-area="Vendor" asp-controller="Products" asp-action="SetPrimaryImage" asp-route-id="@Model.Id" method="post">
+                                            <input type="hidden" name="imageId" value="@image.Id" />
+                                            <button type="submit" class="btn btn-sm btn-outline-primary">Make main</button>
+                                        </form>
+                                    }
+                                    <form asp-area="Vendor" asp-controller="Products" asp-action="DeleteImage" asp-route-id="@Model.Id" method="post"
+                                          data-confirm="Delete this image? The file is removed from the server.">
+                                        <input type="hidden" name="imageId" value="@image.Id" />
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
     </div>
 </div>
 
