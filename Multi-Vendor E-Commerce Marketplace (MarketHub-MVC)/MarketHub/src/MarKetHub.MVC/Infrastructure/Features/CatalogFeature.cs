@@ -1,13 +1,15 @@
+using MarketHub.BLL.Interfaces;
+using MarketHub.BLL.Services;
+
 namespace MarketHub.MVC.Infrastructure.Features;
 
-/// <summary>
-/// OWNER: Member B (catalog, reviews). Register YOUR services here and only here, for example:
-///   services.AddScoped&lt;ICatalogService, CatalogService&gt;();
-/// </summary>
 public static class CatalogFeature
 {
     public static IServiceCollection AddCatalogFeature(this IServiceCollection services)
     {
+        services.AddScoped<ICatalogService, CatalogService>();
+        services.AddScoped<IReviewService, ReviewService>();
+
         return services;
     }
 }
