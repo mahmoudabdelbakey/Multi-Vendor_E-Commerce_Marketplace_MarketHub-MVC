@@ -21,6 +21,27 @@ public sealed class CartController : AppControllerBase
     }
 
     [HttpPost]
+    public async Task<IActionResult> Add(AddToCartViewModel model, CancellationToken ct)
+    {
+        var returnUrl = !string.IsNullOrWhiteSpace(model.ReturnUrl) &&
+                        model.ReturnUrl.Length <= 2048 &&
+                        Url.IsLocalUrl(model.ReturnUrl)
+            ? model.ReturnUrl
+            : Url.Action(nameof(Index)) ?? "/Cart";
+
+        if (!ModelState.IsValid)
+        {
+            Flash(false, "Enter a valid product and a quantity from 1 to 99.");
+            return LocalRedirect(returnUrl);
+        }
+
+        var result = await _cartService.AddAsync(
+            CurrentUserId, model.ProductId, model.Quantity, ct);
+
+        Flash(result);
+        return LocalRedirect(returnUrl);
+    }
+    [HttpPost]
     public async Task<IActionResult> UpdateQuantity(CartQuantityViewModel model, CancellationToken ct)
     {
         if (!ModelState.IsValid)
