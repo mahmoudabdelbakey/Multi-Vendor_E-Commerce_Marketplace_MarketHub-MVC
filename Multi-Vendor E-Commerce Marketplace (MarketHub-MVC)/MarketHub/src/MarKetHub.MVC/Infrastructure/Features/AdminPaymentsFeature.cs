@@ -1,4 +1,5 @@
 using MarketHub.BLL.Interfaces;
+using MarketHub.BLL.Options;
 using MarketHub.BLL.Services;
 
 namespace MarketHub.MVC.Infrastructure.Features;
@@ -10,6 +11,8 @@ public static class AdminPaymentsFeature
         services.AddScoped<ICommissionService, CommissionService>();
         services.AddScoped<ICategoryService, CategoryService>();
 
+        services.Configure<StripeOptions>(configuration.GetSection(StripeOptions.SectionName));
+        services.AddScoped<IStripeWebhookService, StripeWebhookService>();
         return services;
     }
 }

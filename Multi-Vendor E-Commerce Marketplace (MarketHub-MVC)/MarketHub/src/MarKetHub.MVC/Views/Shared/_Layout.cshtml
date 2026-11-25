@@ -60,7 +60,7 @@
                     @if (User.IsInRole(Roles.Customer))
                     {
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Cart" asp-action="Index">Cart @* Member D (TASK-21): put @await Component.InvokeAsync("CartCount") here once the View Component exists *@</a>
+                                <a class="nav-link" asp-area="" asp-controller="Cart" asp-action="Index">Cart @await Component.InvokeAsync("CartCount")</a>
                         </li>
                     }
 

@@ -47,10 +47,16 @@ public class CategoryService : ICategoryService
 
     public async Task<Result<int>> CreateAsync(string name, CancellationToken ct = default)
     {
-        if (string.IsNullOrWhiteSpace(name))
+        name = (name ?? string.Empty).Trim();
+        if (name.Length == 0)
             return Result<int>.Fail("Name is required.");
 
-        var slug = name.ToLower().Replace(" ", "-");
+        if (name.Length > MaxNameLength)
+            return Result<int>.Fail($"The name can have at most {MaxNameLength} characters.");
+
+        var slug = Slugify(name);
+        if (slug.Length == 0)
+            return Result<int>.Fail("The name must contain letters or digits.");
 
         var exists = await _db.Categories
             .AnyAsync(c => c.Name == name || c.Slug == slug, ct);
@@ -78,10 +84,16 @@ public class CategoryService : ICategoryService
         if (category == null)
             return Result.NotFoundResult("Category not found.");
 
-        if (string.IsNullOrWhiteSpace(name))
+        name = (name ?? string.Empty).Trim();
+        if (name.Length == 0)
             return Result.Fail("Name is required.");
 
-        var slug = name.ToLower().Replace(" ", "-");
+        if (name.Length > MaxNameLength)
+            return Result.Fail($"The name can have at most {MaxNameLength} characters.");
+
+        var slug = Slugify(name);
+        if (slug.Length == 0)
+            return Result.Fail("The name must contain letters or digits.");
 
         var duplicate = await _db.Categories
             .AnyAsync(c => c.Id != id && (c.Name == name || c.Slug == slug), ct);
@@ -98,6 +110,30 @@ public class CategoryService : ICategoryService
         return Result.Ok();
     }
 
+    private const int MaxNameLength = 80;   // same as the database column
+    private const int MaxSlugLength = 100;  // same as the database column
+
+    internal static string Slugify(string name)
+    {
+        var sb = new System.Text.StringBuilder();
+        var lastWasDash = true; // true at the start: no leading dash
+        foreach (var ch in name.Trim().ToLowerInvariant())
+        {
+            if (char.IsLetterOrDigit(ch))
+            {
+                sb.Append(ch);
+                lastWasDash = false;
+            }
+            else if (!lastWasDash)
+            {
+                sb.Append('-');
+                lastWasDash = true;
+            }
+        }
+
+        var slug = sb.ToString().Trim('-');
+        return slug.Length > MaxSlugLength ? slug[..MaxSlugLength].Trim('-') : slug;
+    }
     public async Task<int> CountActiveProductsAsync(int categoryId, CancellationToken ct = default)
     {
         return await _db.Products

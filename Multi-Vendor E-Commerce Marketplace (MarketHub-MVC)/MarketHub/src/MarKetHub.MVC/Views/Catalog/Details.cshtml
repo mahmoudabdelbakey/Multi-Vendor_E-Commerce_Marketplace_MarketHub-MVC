@@ -35,7 +35,7 @@
                                       ?? Model.Images.First();
 
                     <div class="text-center mb-3">
-                        <img src="@primaryImage.Path"
+                        <img src="@Url.Content("~/" + primaryImage.Path.TrimStart('/'))"
                              alt="@Model.Name"
                              class="img-fluid rounded-3"
                              style="max-height:400px; object-fit:contain;" />
@@ -44,7 +44,7 @@
                     <div class="d-flex flex-wrap gap-3 justify-content-center">
                         @foreach (var image in Model.Images)
                         {
-                            <img src="@image.Path"
+                            <img src="@Url.Content("~/" + image.Path.TrimStart('/'))"
                                  alt="@Model.Name"
                                  class="rounded border p-1"
                                  style="width:80px;height:80px;object-fit:cover;" />
@@ -99,6 +99,24 @@
                     <span class="text-secondary">Category:</span>
                     <strong class="ms-2">@Model.CategoryName</strong>
                 </div>
+
+                @if (Model.StockQuantity > 0)
+                {
+                    @if (User.IsInRole(Roles.Customer))
+                    {
+                        <div class="mb-4">
+                            <partial name="_AddToCartForm"
+                                     model="new AddToCartViewModel { ProductId = Model.Id, Quantity = 1 }" />
+                        </div>
+                    }
+                    else if (User.Identity?.IsAuthenticated != true)
+                    {
+                        <p class="mb-4">
+                            <a asp-controller="Account" asp-action="Login"
+                               asp-route-returnUrl="@Context.Request.Path">Log in</a> to add this product to your cart.
+                        </p>
+                    }
+                }
 
                 <a href="/Products"
                    class="btn btn-outline-primary px-4">
