@@ -120,6 +120,12 @@ public class ProductsController : VendorControllerBase
     {
         model.Id = id;
 
+        // TASK-35: the version the form was opened with is required. Without it the service could not detect a concurrent edit.
+        if (string.IsNullOrWhiteSpace(model.RowVersion))
+        {
+            ModelState.AddModelError(string.Empty, "This form is out of date. Please reload the page and try again.");
+        }
+
         if (!ModelState.IsValid)
         {
             return await ReShowEditAsync(model, ct);
@@ -135,6 +141,18 @@ public class ProductsController : VendorControllerBase
 
         if (!result.Success)
         {
+            // TASK-35: if the saved product has a newer version than the form, somebody else changed it: show the conflict screen.
+            var latest = await _products.GetForEditAsync(VendorId, id, ct);
+            if (latest is null)
+            {
+                return NotFound();
+            }
+
+            if (!string.Equals(latest.Input.RowVersion, model.RowVersion, StringComparison.Ordinal))
+            {
+                return await ShowConflictAsync(model, latest, ct);
+            }
+
             ModelState.AddModelError(string.Empty, result.Message);
             return await ReShowEditAsync(model, ct);
         }
@@ -206,6 +224,21 @@ public class ProductsController : VendorControllerBase
         }
 
         model.ExistingImages = current.Images;
+        await FillCategoriesAsync(model, ct);
+        return View(model);
+    }
+
+    /// <summary>
+    /// TASK-35. Somebody else saved this product after the form was opened. Nothing is overwritten.
+    /// The form keeps what the vendor typed, but carries the NEW RowVersion: pressing Save again is a conscious decision
+    /// to overwrite. The values that are saved right now are shown above the form so the vendor can compare.
+    /// </summary>
+    private async Task<IActionResult> ShowConflictAsync(ProductFormViewModel model, ProductEditDto latest, CancellationToken ct)
+    {
+        ModelState.Remove(nameof(ProductFormViewModel.RowVersion)); // otherwise the hidden field would re-post the old value
+        model.RowVersion = latest.Input.RowVersion;
+        model.LatestSaved = latest;
+        model.ExistingImages = latest.Images;
         await FillCategoriesAsync(model, ct);
         return View(model);
     }

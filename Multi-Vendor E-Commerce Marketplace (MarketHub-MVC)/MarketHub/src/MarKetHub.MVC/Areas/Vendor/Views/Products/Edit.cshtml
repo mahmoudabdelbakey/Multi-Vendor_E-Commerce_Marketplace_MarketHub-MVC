@@ -7,6 +7,28 @@
     <div class="col-lg-8">
         <h1 class="h3 mb-3">Edit product</h1>
 
+        @* TASK-35: shown only after a concurrent edit was detected. *@
+        @if (Model.LatestSaved is { } saved)
+        {
+            var savedCategory = Model.Categories.FirstOrDefault(c => c.Value == saved.Input.CategoryId.ToString())?.Text ?? "(category not available)";
+            <div class="alert alert-warning" role="alert">
+                <h2 class="h6 alert-heading">This product was changed by someone else</h2>
+                <p class="mb-2">
+                    Nothing was saved. The form below still shows what you typed.
+                    If you press "Save changes" again, your values replace the ones saved now.
+                    To keep the other change, <a asp-area="Vendor" asp-controller="Products" asp-action="Edit" asp-route-id="@Model.Id">reload the page</a> instead.
+                </p>
+                <dl class="row mb-0 small">
+                    <dt class="col-sm-4">Name</dt><dd class="col-sm-8">@saved.Input.Name</dd>
+                    <dt class="col-sm-4">Price</dt><dd class="col-sm-8">@saved.Input.Price.ToString("0.00")</dd>
+                    <dt class="col-sm-4">Stock</dt><dd class="col-sm-8">@saved.Input.StockQuantity</dd>
+                    <dt class="col-sm-4">Category</dt><dd class="col-sm-8">@savedCategory</dd>
+                    <dt class="col-sm-4">Visible in the store</dt><dd class="col-sm-8">@(saved.Input.IsActive ? "Yes" : "No")</dd>
+                </dl>
+                <p class="small mt-2 mb-0">Images you selected in the form are not kept by the browser: choose them again.</p>
+            </div>
+        }
+
         <form asp-area="Vendor" asp-controller="Products" asp-action="Edit" asp-route-id="@Model.Id" method="post"
               enctype="multipart/form-data" class="card card-body" data-once>
             @* The version of the product this form was opened with: lets the service detect a concurrent edit (TASK-35). *@

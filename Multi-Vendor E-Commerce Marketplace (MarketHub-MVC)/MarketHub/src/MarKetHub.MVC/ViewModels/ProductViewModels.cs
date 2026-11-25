@@ -55,6 +55,10 @@ public class ProductFormViewModel
     [ValidateNever, BindNever]
     public IReadOnlyList<SelectListItem> Categories { get; set; } = Array.Empty<SelectListItem>();
 
+    /// <summary>Set only when a concurrent edit was detected (TASK-35): what is saved in the database right now.</summary>
+    [ValidateNever, BindNever]
+    public ProductEditDto? LatestSaved { get; set; }
+
     [ValidateNever, BindNever]
     public IReadOnlyList<ProductImageDto> ExistingImages { get; set; } = Array.Empty<ProductImageDto>();
 }
