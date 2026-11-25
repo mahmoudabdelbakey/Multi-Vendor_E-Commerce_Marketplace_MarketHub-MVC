@@ -81,8 +81,8 @@ public class CommissionService : ICommissionService
                 continue;
 
             var gross = item.UnitPrice * item.Quantity;
-            var commission = Math.Round(gross * activeSetting.RatePercent / 100m, 2, MidpointRounding.AwayFromZero);
-            var net = gross - commission;
+            var (commission, net) = CommissionCalculator.Split(gross, activeSetting.RatePercent);
+
 
             var record = new CommissionRecord
             {

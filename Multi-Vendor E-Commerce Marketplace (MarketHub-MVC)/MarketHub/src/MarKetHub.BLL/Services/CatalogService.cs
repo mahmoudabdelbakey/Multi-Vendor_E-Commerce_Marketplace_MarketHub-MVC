@@ -61,7 +61,7 @@ public class CatalogService : ICatalogService
         // Sorting.
         products = query.Sort switch
         {
-            "price_asc" => products.OrderBy(p => p.Price),
+            "price_asc" => products.OrderBy(p => p.Price).ThenBy(p => p.Id),
             "price_desc" => products.OrderByDescending(p => p.Price),
             "name" => products.OrderBy(p => p.Name),
             _ => products.OrderByDescending(p => p.CreatedAt)
@@ -140,7 +140,7 @@ public class CatalogService : ICatalogService
             .OrderByDescending(r => r.CreatedAt)
             .Select(r => new ReviewDto(
                 r.Id,
-                r.Customer.UserName ?? "Customer",
+                r.Customer.FullName,
                 r.Rating,
                 r.Comment,
                 r.CreatedAt))

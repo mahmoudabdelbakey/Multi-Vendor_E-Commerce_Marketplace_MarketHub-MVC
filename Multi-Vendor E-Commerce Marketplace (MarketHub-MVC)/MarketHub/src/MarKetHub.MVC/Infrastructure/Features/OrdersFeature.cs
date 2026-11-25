@@ -1,3 +1,6 @@
+using MarketHub.BLL.Interfaces;
+using MarketHub.BLL.Services;
+
 namespace MarketHub.MVC.Infrastructure.Features;
 
 /// <summary>
@@ -10,6 +13,7 @@ public static class OrdersFeature
 {
     public static IServiceCollection AddOrdersFeature(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddScoped<ICartService, CartService>();
         return services;
     }
 }

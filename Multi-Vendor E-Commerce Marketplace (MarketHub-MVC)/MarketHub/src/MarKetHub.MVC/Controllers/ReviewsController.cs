@@ -40,6 +40,7 @@ public class ReviewsController : Controller
 
         TempData["ReviewSuccess"] = result.Message;
 
-        return Redirect($"/Products/Details/{productId}#reviews");
+        var details = Url.Action("Details", "Catalog", new { id = productId }) ?? "/Products";
+        return Redirect(details + "#reviews");
     }
 }
