@@ -10,6 +10,7 @@ public static class AdminPaymentsFeature
         services.AddScoped<ICommissionService, CommissionService>();
         services.AddScoped<ICategoryService, CategoryService>();
         services.AddScoped<IStripeWebhookService, StripeWebhookService>();
+        services.AddScoped<IAdminService, AdminService>();
 
         return services;
     }

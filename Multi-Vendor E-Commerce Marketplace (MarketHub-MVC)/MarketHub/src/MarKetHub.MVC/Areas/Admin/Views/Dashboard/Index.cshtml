@@ -1,0 +1,108 @@
+@using MarketHub.BLL.Models
+@model AdminDashboardDto
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container mt-4">
+    <h2>Dashboard</h2>
+
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h5>Total Vendors</h5>
+                    <h2>@Model.TotalVendors</h2>
+                    <small>Pending: @Model.PendingVendors | Approved: @Model.ApprovedVendors</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success">
+                <div class="card-body">
+                    <h5>Products</h5>
+                    <h2>@Model.TotalProducts</h2>
+                    <small>Active: @Model.ActiveProducts</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-info">
+                <div class="card-body">
+                    <h5>Orders</h5>
+                    <h2>@Model.TotalOrders</h2>
+                    <small>Paid: @Model.PaidOrders</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning">
+                <div class="card-body">
+                    <h5>Users</h5>
+                    <h2>@Model.RegisteredUsers</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">Revenue</div>
+                <div class="card-body">
+                    <h3>@Model.GrossRevenue.ToString("C")</h3>
+                    <p>Total Commission: @Model.TotalCommission.ToString("C")</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">Top Vendors</div>
+                <div class="card-body">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Store</th>
+                                <th>Sales</th>
+                                <th>Commission</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var vendor in Model.TopVendors)
+                            {
+                                <tr>
+                                    <td>@vendor.StoreName</td>
+                                    <td>@vendor.GrossSales.ToString("C")</td>
+                                    <td>@vendor.Commission.ToString("C")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">Last 7 Days Revenue</div>
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Revenue</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var day in Model.Last7Days)
+                    {
+                        <tr>
+                            <td>@day.Date.ToString("yyyy-MM-dd")</td>
+                            <td>@day.Amount.ToString("C")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

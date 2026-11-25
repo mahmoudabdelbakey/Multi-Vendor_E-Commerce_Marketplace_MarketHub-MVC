@@ -1,0 +1,106 @@
+@using MarketHub.BLL.Common
+@using MarketHub.BLL.Models
+@using MarKetHub.DAL.Enums
+@model PagedResult<VendorOrderItemDto>
+@{
+    ViewData["Title"] = "Orders";
+    var currentStatus = ViewBag.CurrentStatus as FulfillmentStatus?;
+}
+
+<div class="container mt-4">
+    <h2>Your Orders</h2>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+
+    <div class="mb-3">
+        <a asp-action="Index" class="btn btn-outline-secondary @(currentStatus == null ? "active" : "")">All</a>
+        <a asp-action="Index" asp-route-status="Pending" class="btn btn-outline-warning @(currentStatus == FulfillmentStatus.Pending ? "active" : "")">Pending</a>
+        <a asp-action="Index" asp-route-status="Shipped" class="btn btn-outline-info @(currentStatus == FulfillmentStatus.Shipped ? "active" : "")">Shipped</a>
+        <a asp-action="Index" asp-route-status="Delivered" class="btn btn-outline-success @(currentStatus == FulfillmentStatus.Delivered ? "active" : "")">Delivered</a>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Order #</th>
+                <th>Date</th>
+                <th>Product</th>
+                <th>Qty</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Ship To</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td>@item.OrderNumber</td>
+                    <td>@item.OrderDate.ToString("yyyy-MM-dd")</td>
+                    <td>@item.ProductName</td>
+                    <td>@item.Quantity</td>
+                    <td>@item.LineTotal.ToString("C")</td>
+                    <td>
+                        @if (item.FulfillmentStatus == FulfillmentStatus.Pending)
+                        {
+                            <span class="badge bg-warning">Pending</span>
+                        }
+                        else if (item.FulfillmentStatus == FulfillmentStatus.Shipped)
+                        {
+                            <span class="badge bg-info">Shipped</span>
+                        }
+                        else if (item.FulfillmentStatus == FulfillmentStatus.Delivered)
+                        {
+                            <span class="badge bg-success">Delivered</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">@item.FulfillmentStatus</span>
+                        }
+                    </td>
+                    <td>
+                        <small>@item.ShipToName<br/>@item.ShipToAddress, @item.ShipToCity</small>
+                    </td>
+                    <td>
+                        @if (item.FulfillmentStatus == FulfillmentStatus.Pending)
+                        {
+                            <form asp-action="Ship" method="post" class="d-inline">
+                                <input type="hidden" name="itemId" value="@item.ItemId" />
+                                <button type="submit" class="btn btn-sm btn-info">Ship</button>
+                            </form>
+                        }
+                        else if (item.FulfillmentStatus == FulfillmentStatus.Shipped)
+                        {
+                            <form asp-action="Deliver" method="post" class="d-inline">
+                                <input type="hidden" name="itemId" value="@item.ItemId" />
+                                <button type="submit" class="btn btn-sm btn-success">Deliver</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @if (Model.TotalPages > 1)
+    {
+        <nav>
+            <ul class="pagination">
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    <li class="page-item @(i == Model.Page ? "active" : "")">
+                        <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-status="@currentStatus">@i</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    }
+</div>

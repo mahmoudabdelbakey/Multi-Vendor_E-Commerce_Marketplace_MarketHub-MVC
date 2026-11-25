@@ -1,0 +1,83 @@
+@using MarketHub.BLL.Common
+@using MarketHub.BLL.Models
+@using MarKetHub.DAL.Enums
+@model PagedResult<AdminOrderDto>
+@{
+    ViewData["Title"] = "All Orders";
+    var currentStatus = ViewBag.CurrentStatus as OrderStatus?;
+}
+
+<div class="container mt-4">
+    <h2>All Orders</h2>
+
+    <div class="mb-3">
+        <a asp-action="Index" class="btn btn-outline-secondary @(currentStatus == null ? "active" : "")">All</a>
+        <a asp-action="Index" asp-route-status="PendingPayment" class="btn btn-outline-warning @(currentStatus == OrderStatus.PendingPayment ? "active" : "")">Pending</a>
+        <a asp-action="Index" asp-route-status="Paid" class="btn btn-outline-info @(currentStatus == OrderStatus.Paid ? "active" : "")">Paid</a>
+        <a asp-action="Index" asp-route-status="Completed" class="btn btn-outline-success @(currentStatus == OrderStatus.Completed ? "active" : "")">Completed</a>
+        <a asp-action="Index" asp-route-status="Cancelled" class="btn btn-outline-danger @(currentStatus == OrderStatus.Cancelled ? "active" : "")">Cancelled</a>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Order #</th>
+                <th>Customer</th>
+                <th>Total</th>
+                <th>Items</th>
+                <th>Vendors</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Model.Items)
+            {
+                <tr>
+                    <td>@order.OrderNumber</td>
+                    <td>@order.CustomerEmail</td>
+                    <td>@order.TotalAmount.ToString("C") @order.Currency</td>
+                    <td>@order.ItemCount</td>
+                    <td>@order.VendorCount</td>
+                    <td>
+                        @if (order.Status == OrderStatus.Paid)
+                        {
+                            <span class="badge bg-info">Paid</span>
+                        }
+                        else if (order.Status == OrderStatus.Completed)
+                        {
+                            <span class="badge bg-success">Completed</span>
+                        }
+                        else if (order.Status == OrderStatus.Cancelled)
+                        {
+                            <span class="badge bg-danger">Cancelled</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning">@order.Status</span>
+                        }
+                    </td>
+                    <td>@order.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@order.Id" class="btn btn-sm btn-outline-primary">Details</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @if (Model.TotalPages > 1)
+    {
+        <nav>
+            <ul class="pagination">
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    <li class="page-item @(i == Model.Page ? "active" : "")">
+                        <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-status="@currentStatus">@i</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    }
+</div>
