@@ -24,7 +24,7 @@
                     @if (User.IsInRole(Roles.Customer))
                     {
                         <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Orders" asp-action="Index">My orders</a></li>
-                        @* Week 2 (Member A, TASK-28): "Sell on MarketHub" link to Account/VendorStatus goes here. *@
+                            <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Account" asp-action="VendorStatus">Sell on MarketHub</a></li>
                     }
 
                     @if (User.IsInRole(Roles.Vendor))

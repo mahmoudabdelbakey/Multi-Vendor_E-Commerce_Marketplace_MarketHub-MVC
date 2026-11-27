@@ -1,3 +1,5 @@
+using MarketHub.BLL.Interfaces;
+using MarketHub.BLL.Models;
 using MarketHub.DAL.Constants;
 using MarketHub.DAL.Entities;
 using MarketHub.MVC.ViewModels;
@@ -13,13 +15,15 @@ public class AccountController : AppControllerBase
     private readonly UserManager<ApplicationUser> _users;
     private readonly SignInManager<ApplicationUser> _signIn;
     private readonly ILogger<AccountController> _logger;
+    private readonly IVendorService _vendors;
 
     public AccountController(
-        UserManager<ApplicationUser> users, SignInManager<ApplicationUser> signIn, ILogger<AccountController> logger)
+        UserManager<ApplicationUser> users, SignInManager<ApplicationUser> signIn, ILogger<AccountController> logger, IVendorService vendors)
     {
         _users = users;
         _signIn = signIn;
         _logger = logger;
+        _vendors = vendors;
     }
 
     // ------------------------------------------------------------------ register
@@ -130,4 +134,43 @@ public class AccountController : AppControllerBase
 
     [AllowAnonymous]
     public IActionResult AccessDenied() => View();
+
+    // ------------------------------------------------------------------ TASK-28: become a vendor
+
+    /// <summary>
+    /// One page for the whole application life: no application yet -> the form; otherwise -> the status
+    /// (Pending, Approved, Rejected with the reason, Suspended). Any logged-in user can open it.
+    /// </summary>
+    [HttpGet]
+    public async Task<IActionResult> VendorStatus(CancellationToken ct) =>
+        View(new VendorStatusViewModel { Vendor = await _vendors.GetByUserIdAsync(CurrentUserId, ct) });
+
+    /// <summary>The user id comes from the login cookie. The form has no user id, role or status field.</summary>
+    [HttpPost]
+    public async Task<IActionResult> ApplyVendor(ApplyVendorViewModel form, CancellationToken ct)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(nameof(VendorStatus), new VendorStatusViewModel { Vendor = null, Form = form });
+        }
+
+        var result = await _vendors.ApplyAsync(
+            CurrentUserId, new VendorApplicationInput { StoreName = form.StoreName, Description = form.Description }, ct);
+
+        if (!result.Success)
+        {
+            // "Already applied" -> show the existing application; any other failure -> show the form with the message.
+            if (await _vendors.GetByUserIdAsync(CurrentUserId, ct) is { } existing)
+            {
+                Flash(result);
+                return View(nameof(VendorStatus), new VendorStatusViewModel { Vendor = existing });
+            }
+
+            ModelState.AddModelError(nameof(form.StoreName), result.Message);
+            return View(nameof(VendorStatus), new VendorStatusViewModel { Vendor = null, Form = form });
+        }
+
+        Flash(result);
+        return RedirectToAction(nameof(VendorStatus)); // Post-Redirect-Get: a refresh cannot submit twice
+    }
 }

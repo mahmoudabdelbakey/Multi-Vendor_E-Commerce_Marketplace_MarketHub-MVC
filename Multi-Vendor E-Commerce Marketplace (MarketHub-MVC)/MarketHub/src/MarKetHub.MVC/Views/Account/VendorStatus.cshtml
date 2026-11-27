@@ -1,0 +1,58 @@
+@model VendorStatusViewModel
+@{
+    ViewData["Title"] = "Sell on MarketHub";
+}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <h1 class="h3 mb-3">Sell on MarketHub</h1>
+
+        @if (Model.Vendor is null)
+        {
+            <p class="text-muted">Tell us about your store. A Super Admin reviews every application.</p>
+            <partial name="_ApplyForm" model="Model.Form" />
+        }
+        else
+        {
+            var v = Model.Vendor;
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h2 class="h5 mb-1">@v.StoreName</h2>
+                            <div class="text-muted small">Applied @DateText(v.CreatedAt)</div>
+                        </div>
+                        <span class="badge @VendorBadge(v.Status)">@v.Status</span>
+                    </div>
+                    @if (!string.IsNullOrWhiteSpace(v.Description))
+                    {
+                        <p class="mt-3 mb-0">@v.Description</p>
+                    }
+
+                    <hr />
+                    @switch (v.Status)
+                    {
+                        case VendorStatus.Pending:
+                            <p class="mb-0">Your application is waiting for review. You can sell as soon as it is approved.</p>
+                            break;
+                        case VendorStatus.Approved:
+                            <p>Your store is approved.</p>
+                            <a class="btn btn-primary" asp-area="Vendor" asp-controller="Products" asp-action="Index">Open my products</a>
+                            <div class="form-text mt-2">If the menu does not show the vendor links yet, wait a minute or log out and log in again.</div>
+                            break;
+                        case VendorStatus.Rejected:
+                            <p class="mb-1">Your application was rejected.</p>
+                            @if (!string.IsNullOrWhiteSpace(v.RejectionReason))
+                            {
+                                <div class="alert alert-danger mb-0"><strong>Reason:</strong> @v.RejectionReason</div>
+                            }
+                            break;
+                        default:
+                            <p class="mb-0">Your store is suspended. Contact the platform administrator for details.</p>
+                            break;
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }
