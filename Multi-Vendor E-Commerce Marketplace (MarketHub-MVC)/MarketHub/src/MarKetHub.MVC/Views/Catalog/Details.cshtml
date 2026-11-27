@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = Model.Name;
+    var roundedRating = (int)Math.Round(Model.AverageRating, MidpointRounding.AwayFromZero);
+    var reviewLabel = Model.ReviewCount == 1 ? "review" : "reviews";
 }
 
 <div class="container py-4">
@@ -17,7 +19,7 @@
     <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-5">
         <div class="row g-0">
 
-            <!-- Images -->
+            <!-- Images (Multi-image gallery) -->
             <div class="col-md-6 bg-white p-4">
                 @if (Model.Images == null || !Model.Images.Any())
                 {
@@ -34,22 +36,26 @@
                     var primaryImage = Model.Images.FirstOrDefault(i => i.IsPrimary)
                                       ?? Model.Images.First();
 
-                    <div class="text-center mb-3">
-                        <img src="@Url.Content("~/" + primaryImage.Path.TrimStart('/'))"
+                    <div class="text-center bg-light rounded-3 p-3 mb-3">
+                        <img id="mainImage"
+                             src="@Url.Content("~/" + primaryImage.Path.TrimStart('/'))"
                              alt="@Model.Name"
-                             class="img-fluid rounded-3"
-                             style="max-height:400px; object-fit:contain;" />
+                             class="img-fluid rounded-3 product-main w-100" />
                     </div>
 
-                    <div class="d-flex flex-wrap gap-3 justify-content-center">
-                        @foreach (var image in Model.Images)
-                        {
-                            <img src="@Url.Content("~/" + image.Path.TrimStart('/'))"
-                                 alt="@Model.Name"
-                                 class="rounded border p-1"
-                                 style="width:80px;height:80px;object-fit:cover;" />
-                        }
-                    </div>
+                    @if (Model.Images.Count > 1)
+                    {
+                        <div class="d-flex flex-wrap gap-2 justify-content-center">
+                            @foreach (var image in Model.Images)
+                            {
+                                var isSelected = image.Id == primaryImage.Id;
+                                <img src="@Url.Content("~/" + image.Path.TrimStart('/'))"
+                                     alt="@Model.Name"
+                                     data-main-image="#mainImage"
+                                     class="rounded border p-1 thumb-small @(isSelected ? "thumb-active" : "")" />
+                            }
+                        </div>
+                    }
                 }
             </div>
 
@@ -59,7 +65,38 @@
                     @Model.CategoryName
                 </span>
 
-                <h1 class="fw-bold mb-3">@Model.Name</h1>
+                <h1 class="fw-bold mb-2">@Model.Name</h1>
+
+                <!-- Average rating & review count -->
+                <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+                    @if (Model.ReviewCount > 0)
+                    {
+                        <div class="text-warning fs-5"
+                             aria-label="Average rating @Model.AverageRating.ToString("0.0") out of 5">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                if (i <= roundedRating)
+                                {
+                                    <span>&#9733;</span>
+                                }
+                                else
+                                {
+                                    <span class="text-secondary">&#9734;</span>
+                                }
+                            }
+                        </div>
+                        <span class="fw-semibold">@Model.AverageRating.ToString("0.0")</span>
+                        <a href="#reviews" class="text-secondary text-decoration-none small">
+                            (@Model.ReviewCount @reviewLabel)
+                        </a>
+                    }
+                    else
+                    {
+                        <a href="#reviews" class="text-secondary text-decoration-none small">
+                            No reviews yet
+                        </a>
+                    }
+                </div>
 
                 <h2 class="text-primary fw-bold mb-4">
                     $@Model.Price.ToString("N2")
@@ -133,21 +170,33 @@
             <h2 class="fw-bold mb-0">Customer Reviews</h2>
 
             <div class="text-end">
-                <div class="text-warning fs-4">
-                    @if (Model.ReviewCount > 0)
-                    {
-                        <span>&#9733;</span>
-                        @Model.AverageRating.ToString("0.0")
+                @if (Model.ReviewCount > 0)
+                {
+                    <div class="d-flex align-items-center justify-content-end gap-2">
+                        <span class="text-warning fs-5">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                if (i <= roundedRating)
+                                {
+                                    <span>&#9733;</span>
+                                }
+                                else
+                                {
+                                    <span class="text-secondary">&#9734;</span>
+                                }
+                            }
+                        </span>
+                        <span class="fw-bold fs-4">@Model.AverageRating.ToString("0.0")</span>
                         <span class="text-secondary fs-6">/ 5</span>
-                    }
-                    else
-                    {
-                        <span class="text-secondary fs-6">No ratings yet</span>
-                    }
-                </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-secondary fs-6">No ratings yet</div>
+                }
 
                 <small class="text-secondary">
-                    @Model.ReviewCount review(s)
+                    @Model.ReviewCount @reviewLabel
                 </small>
             </div>
         </div>
@@ -249,8 +298,8 @@
             <div class="d-flex flex-column gap-3">
                 @foreach (var review in Model.Reviews)
                 {
-                    <div class="border rounded-3 p-3">
-                        <div class="d-flex justify-content-between flex-wrap gap-2 mb-2">
+                    <div class="border rounded-3 p-3 bg-white">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
                             <strong>@review.CustomerName</strong>
 
                             <small class="text-secondary">
@@ -274,9 +323,14 @@
                             </span>
                         </div>
 
-                        <p class="text-secondary mb-0">
-                            @(review.Comment ?? "No comment provided.")
-                        </p>
+                        @if (!string.IsNullOrWhiteSpace(review.Comment))
+                        {
+                            <p class="text-secondary mb-0">@review.Comment</p>
+                        }
+                        else
+                        {
+                            <p class="text-muted fst-italic mb-0">No comment provided.</p>
+                        }
                     </div>
                 }
             </div>

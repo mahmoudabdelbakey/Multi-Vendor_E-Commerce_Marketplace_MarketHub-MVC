@@ -30,6 +30,9 @@
 
     // <img data-main-image="#mainImage"> swaps the big product picture.
     $(document).on('click', 'img[data-main-image]', function () {
-        $($(this).data('main-image')).attr('src', this.src);
+        var $thumb = $(this);
+        $($thumb.data('main-image')).attr('src', this.src);
+        $thumb.siblings('img[data-main-image]').removeClass('thumb-active');
+        $thumb.addClass('thumb-active');
     });
 })(jQuery);

@@ -147,3 +147,14 @@ body {
     width: 76px;
     height: 76px;
 }
+.thumb-small {
+    transition: border-color .15s ease, opacity .15s ease;
+    opacity: .8;
+}
+
+    .thumb-small:hover,
+    .thumb-small.thumb-active {
+        opacity: 1;
+        border-color: var(--mh-accent) !important;
+        box-shadow: 0 0 0 2px rgba(79, 70, 229, .2);
+    }
