@@ -1,0 +1,36 @@
+@model StoreProfileViewModel
+@{
+    ViewData["Title"] = "Store profile";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <h1 class="h3 mb-3">Store profile</h1>
+
+        <form asp-area="Vendor" asp-controller="Store" asp-action="Edit" method="post" class="card card-body" data-once>
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2" role="alert"></div>
+
+            <div class="mb-3">
+                <label class="form-label" asp-for="StoreName"></label>
+                <input class="form-control" asp-for="StoreName" maxlength="100" autocomplete="off" />
+                <div class="form-text">Customers see this name on your products. It must be unique on MarketHub.</div>
+                <span class="text-danger" asp-validation-for="StoreName"></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" asp-for="Description"></label>
+                <textarea class="form-control" asp-for="Description" rows="5" maxlength="1000"></textarea>
+                <span class="text-danger" asp-validation-for="Description"></span>
+            </div>
+
+            <p class="text-muted small">Store status: <strong>@Model.StatusText</strong></p>
+
+            <div class="d-flex gap-2">
+                <button class="btn btn-primary" type="submit">Save changes</button>
+                <a class="btn btn-outline-secondary" asp-area="Vendor" asp-controller="Products" asp-action="Index">Back to my products</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }
