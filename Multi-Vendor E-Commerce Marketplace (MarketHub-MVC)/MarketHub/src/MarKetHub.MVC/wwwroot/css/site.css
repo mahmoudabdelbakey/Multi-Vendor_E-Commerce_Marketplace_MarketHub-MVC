@@ -138,6 +138,15 @@ body {
     box-shadow: 0 0 0 .2rem rgba(79, 70, 229, .15);
 }
 
+/* Unified Error Pages (TASK-33) */
+.error-page-card {
+    background-color: #ffffff;
+}
+
+.error-icon-circle {
+    width: 76px;
+    height: 76px;
+}
 .thumb-small {
     transition: border-color .15s ease, opacity .15s ease;
     opacity: .8;
