@@ -1,0 +1,111 @@
+@using MarKetHub.DAL.Enums
+@using MarketHub.MVC.ViewModels
+@using static MarketHub.MVC.Infrastructure.UiHelpers
+@model VendorApplicationsViewModel
+@{
+    ViewData["Title"] = "Vendors";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <h2 class="mb-0">Vendors</h2>
+        <form method="get" asp-action="Index" class="d-flex gap-2">
+            <select class="form-select" name="status" aria-label="Filter by status" onchange="this.form.submit()">
+                <option value="">All statuses</option>
+                @foreach (var s in Enum.GetValues<VendorStatus>())
+                {
+                    <option value="@s" selected="@(Model.Status == s)">@s</option>
+                }
+            </select>
+            <noscript><button class="btn btn-outline-secondary" type="submit">Filter</button></noscript>
+        </form>
+    </div>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+
+    @if (Model.Result.Items.Count == 0)
+    {
+        <div class="alert alert-light border">No vendors found.</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr><th>Store</th><th>Owner</th><th>Applied</th><th>Status</th><th style="min-width: 18rem"></th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var v in Model.Result.Items)
+                    {
+                        <tr>
+                            <td>
+                                <strong>@v.StoreName</strong>
+                                @if (!string.IsNullOrWhiteSpace(v.Description))
+                                {
+                                    <div class="small text-muted">@v.Description</div>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(v.RejectionReason))
+                                {
+                                    <div class="small text-danger">Reason: @v.RejectionReason</div>
+                                }
+                            </td>
+                            <td>@v.OwnerName<br /><span class="small text-muted">@v.OwnerEmail</span></td>
+                            <td>@DateText(v.CreatedAt)</td>
+                            <td><span class="badge @VendorBadge(v.Status)">@v.Status</span></td>
+                            <td>
+                                @switch (v.Status)
+                                {
+                                    case VendorStatus.Pending:
+                                        <div class="d-flex flex-column gap-2">
+                                            <form asp-action="Approve" asp-route-id="@v.Id" asp-route-status="@Model.Status" method="post">
+                                                <button class="btn btn-success btn-sm" type="submit">Approve</button>
+                                            </form>
+                                            <form asp-action="Reject" asp-route-id="@v.Id" asp-route-status="@Model.Status" method="post" class="d-flex gap-1">
+                                                <input class="form-control form-control-sm" name="reason" maxlength="500" required
+                                                       placeholder="Rejection reason (required)" aria-label="Rejection reason" />
+                                                <button class="btn btn-outline-danger btn-sm" type="submit">Reject</button>
+                                            </form>
+                                        </div>
+                                        break;
+                                    case VendorStatus.Approved:
+                                        <form asp-action="Suspend" asp-route-id="@v.Id" asp-route-status="@Model.Status" method="post"
+                                              data-confirm="Suspend this vendor? The products will be hidden from the store.">
+                                            <button class="btn btn-outline-warning btn-sm" type="submit">Suspend</button>
+                                        </form>
+                                        break;
+                                    case VendorStatus.Suspended:
+                                        <form asp-action="Restore" asp-route-id="@v.Id" asp-route-status="@Model.Status" method="post">
+                                            <button class="btn btn-outline-success btn-sm" type="submit">Restore</button>
+                                        </form>
+                                        break;
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (Model.Result.TotalPages > 1)
+        {
+            <nav aria-label="Pages">
+                <ul class="pagination">
+                    <li class="page-item @(Model.Result.HasPrevious ? "" : "disabled")">
+                        <a class="page-link" asp-route-status="@Model.Status" asp-route-page="@(Model.Result.Page - 1)">Previous</a>
+                    </li>
+                    <li class="page-item disabled"><span class="page-link">Page @Model.Result.Page of @Model.Result.TotalPages</span></li>
+                    <li class="page-item @(Model.Result.HasNext ? "" : "disabled")">
+                        <a class="page-link" asp-route-status="@Model.Status" asp-route-page="@(Model.Result.Page + 1)">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        }
+    }
+</div>

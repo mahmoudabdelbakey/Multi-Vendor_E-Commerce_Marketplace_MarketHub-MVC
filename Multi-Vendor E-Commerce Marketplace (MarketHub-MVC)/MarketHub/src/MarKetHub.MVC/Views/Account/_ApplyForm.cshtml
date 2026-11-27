@@ -1,0 +1,17 @@
+@model ApplyVendorViewModel
+
+<form asp-controller="Account" asp-action="ApplyVendor" method="post" class="card card-body">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="mb-3">
+        <label class="form-label" asp-for="StoreName"></label>
+        <input class="form-control" asp-for="StoreName" maxlength="100" />
+        <span class="text-danger" asp-validation-for="StoreName"></span>
+        <div class="form-text">The name must be unique. Customers will see it on your products.</div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" asp-for="Description"></label>
+        <textarea class="form-control" asp-for="Description" rows="4" maxlength="1000"></textarea>
+        <span class="text-danger" asp-validation-for="Description"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit application</button>
+</form>

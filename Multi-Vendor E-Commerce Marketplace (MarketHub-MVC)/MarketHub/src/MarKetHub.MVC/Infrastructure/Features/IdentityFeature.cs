@@ -1,4 +1,5 @@
 using MarketHub.BLL.Interfaces;
+using MarketHub.BLL.Services;
 using MarketHub.DAL.Constants;
 using MarketHub.DAL.Data;
 using MarketHub.DAL.Entities;
@@ -65,6 +66,15 @@ public static class IdentityFeature
 
         // ------------------------------------------------------------ TASK-12
         services.AddScoped<ICurrentVendorService, CurrentVendorService>();
+
+        // ------------------------------------------------------------ TASK-28
+        services.AddScoped<IVendorService, VendorService>();
+
+        // TASK-29
+        services.AddScoped<IVendorAdminService, VendorAdminService>();
+
+        // TASK-30
+        services.AddScoped<IAuthorizationHandler, ApprovedVendorHandler>();
 
         return services;
     }
