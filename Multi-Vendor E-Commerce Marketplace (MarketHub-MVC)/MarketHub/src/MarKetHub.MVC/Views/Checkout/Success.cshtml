@@ -1,0 +1,70 @@
+@model OrderDetailsDto
+@{
+    ViewData["Title"] = "Checkout complete";
+}
+
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
+            <div>
+                <h1 class="h3 mb-1">Thank you for your order</h1>
+                <p class="text-muted mb-0">Order <strong>@Model.OrderNumber</strong> placed on @DateText(Model.CreatedAt)</p>
+            </div>
+            <span class="badge @OrderBadge(Model.Status) fs-6">@Model.Status</span>
+        </div>
+
+        @if (Model.Status == OrderStatus.Paid || Model.Status == OrderStatus.Completed)
+        {
+            <div class="alert alert-success mb-0" role="alert">
+                Payment confirmed on @DateText(Model.PaidAt). Your vendors can now begin fulfilling your items.
+            </div>
+        }
+        else if (Model.Status == OrderStatus.PendingPayment)
+        {
+            <div class="alert alert-info mb-0" role="alert">
+                Your order is created and stock is reserved. Payment status updates automatically once confirmation arrives from the payment provider.
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-secondary mb-0" role="alert">
+                This order is currently marked as <strong>@Model.Status</strong>.
+            </div>
+        }
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <h2 class="h6 text-uppercase text-muted mb-3">Shipping address</h2>
+                <p class="mb-1 fw-semibold">@Model.Shipping.FullName</p>
+                <p class="mb-1">@Model.Shipping.Phone</p>
+                <p class="mb-1">@Model.Shipping.Address</p>
+                <p class="mb-0">@Model.Shipping.City, @Model.Shipping.Country</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <h2 class="h6 text-uppercase text-muted mb-3">Summary</h2>
+                <p class="d-flex justify-content-between mb-2">
+                    <span>Items</span>
+                    <span>@Model.Items.Sum(i => i.Quantity)</span>
+                </p>
+                <p class="d-flex justify-content-between mb-0 fs-5">
+                    <strong>Total (@Model.Currency)</strong>
+                    <strong>@Money(Model.TotalAmount)</strong>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex flex-wrap gap-2">
+    <a class="btn btn-primary" asp-controller="Orders" asp-action="Details" asp-route-id="@Model.Id">View order details</a>
+    <a class="btn btn-outline-secondary" asp-controller="Orders" asp-action="Index">My orders</a>
+    <a class="btn btn-outline-secondary" asp-controller="Home" asp-action="Index">Continue shopping</a>
+</div>

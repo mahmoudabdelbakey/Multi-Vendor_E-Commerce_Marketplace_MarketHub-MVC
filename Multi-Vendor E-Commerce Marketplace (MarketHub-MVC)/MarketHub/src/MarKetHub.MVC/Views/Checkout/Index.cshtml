@@ -1,0 +1,89 @@
+@model CheckoutViewModel
+@{
+    ViewData["Title"] = "Checkout";
+}
+
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+    <h1 class="h3 mb-0">Checkout</h1>
+    <a class="btn btn-outline-secondary btn-sm" asp-controller="Cart" asp-action="Index">Back to cart</a>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="h5 mb-3">Shipping details</h2>
+
+                <form asp-action="Index" method="post" data-once>
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label class="form-label" asp-for="FullName"></label>
+                        <input class="form-control" asp-for="FullName" autocomplete="name" />
+                        <span class="text-danger small" asp-validation-for="FullName"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" asp-for="Phone"></label>
+                        <input class="form-control" asp-for="Phone" autocomplete="tel" />
+                        <span class="text-danger small" asp-validation-for="Phone"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" asp-for="Address"></label>
+                        <input class="form-control" asp-for="Address" autocomplete="street-address" />
+                        <span class="text-danger small" asp-validation-for="Address"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" asp-for="City"></label>
+                            <input class="form-control" asp-for="City" autocomplete="address-level2" />
+                            <span class="text-danger small" asp-validation-for="City"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" asp-for="Country"></label>
+                            <input class="form-control" asp-for="Country" autocomplete="country-name" />
+                            <span class="text-danger small" asp-validation-for="Country"></span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">Place order &amp; continue to payment</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <aside class="col-lg-5">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="h5 mb-3">Order summary</h2>
+
+                <ul class="list-group list-group-flush mb-3">
+                    @foreach (var item in Model.Cart.Items)
+                    {
+                        <li class="list-group-item px-0 d-flex justify-content-between align-items-start gap-2">
+                            <div>
+                                <div class="fw-semibold">@item.ProductName</div>
+                                <div class="small text-muted">@item.StoreName &middot; Qty @item.Quantity &times; @Money(item.UnitPrice)</div>
+                            </div>
+                            <span class="fw-semibold text-nowrap">@Money(item.LineTotal)</span>
+                        </li>
+                    }
+                </ul>
+
+                <div class="d-flex justify-content-between align-items-center border-top pt-3">
+                    <span class="fw-semibold">Total (@Model.Cart.ItemCount item(s))</span>
+                    <strong class="fs-5">@Money(Model.Cart.Total)</strong>
+                </div>
+                <p class="small text-muted mb-0 mt-2">
+                    Prices and stock are re-verified on the server when placing your order.
+                </p>
+            </div>
+        </div>
+    </aside>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
