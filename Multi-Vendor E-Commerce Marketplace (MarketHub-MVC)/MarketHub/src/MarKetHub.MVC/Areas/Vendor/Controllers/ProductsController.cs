@@ -12,7 +12,7 @@ namespace MarketHub.MVC.Areas.Vendor.Controllers;
 /// Every call to the service passes <see cref="VendorControllerBase.VendorId"/> (from the login), so another vendor's
 /// product answers 404 exactly like a product that does not exist.
 /// Rules of the team: ModelState check -> call the service -> flash the Result -> redirect (Post-Redirect-Get).
-/// Later tasks add to this controller: images (TASK-34), concurrent edit message (TASK-35), search / paging / quick stock (TASK-37).
+/// Added later: images (TASK-34), concurrent edit message (TASK-35), search / paging / show-hide / quick stock (TASK-37).
 /// </summary>
 public class ProductsController : VendorControllerBase
 {
@@ -34,18 +34,20 @@ public class ProductsController : VendorControllerBase
 
     // ------------------------------------------------------------------ list
 
+    /// <summary>TASK-37. Search by name (q) + paging. The search text travels in the URL, so paging and redirects keep it.</summary>
     [HttpGet]
-    public async Task<IActionResult> Index(int page = 1, CancellationToken ct = default)
+    public async Task<IActionResult> Index(string? q = null, int page = 1, CancellationToken ct = default)
     {
-        var result = await _products.ListAsync(VendorId, null, page, PageSize, ct);
+        var search = NormalizeSearch(q);
+        var result = await _products.ListAsync(VendorId, search, page, PageSize, ct);
 
         // Deleting the last product of the last page leaves an empty page: go to the last page that exists.
         if (result.Items.Count == 0 && page > 1)
         {
-            return RedirectToAction(nameof(Index), new { page = Math.Max(1, result.TotalPages) });
+            return RedirectToAction(nameof(Index), new { q = search, page = Math.Max(1, result.TotalPages) });
         }
 
-        return View(result);
+        return View(new ProductListViewModel { Products = result, Search = search });
     }
 
     // ------------------------------------------------------------------ create
@@ -186,13 +188,50 @@ public class ProductsController : VendorControllerBase
     /// POST only. A product with orders is hidden instead of deleted: the service decides and its message tells the vendor.
     /// </summary>
     [HttpPost]
-    public async Task<IActionResult> Delete([FromRoute] int id, int page = 1, CancellationToken ct = default)
+    public async Task<IActionResult> Delete([FromRoute] int id, string? q = null, int page = 1, CancellationToken ct = default)
     {
         var result = await _products.DeleteAsync(VendorId, id, ct);
-        return RedirectWithResult(result, nameof(Index), new { page });
+        return RedirectWithResult(result, nameof(Index), new { q = NormalizeSearch(q), page });
+    }
+
+    // ------------------------------------------------------------------ quick actions from the list (TASK-37)
+    // Both change the Product row, so a form that is open in another tab gets the "changed by someone else" message (TASK-35).
+
+    /// <summary>Show / hide in the store. The service checks the owner; isActive is the NEW value the button asks for.</summary>
+    [HttpPost]
+    public async Task<IActionResult> ToggleActive([FromRoute] int id, bool isActive, string? q = null, int page = 1, CancellationToken ct = default)
+    {
+        var result = await _products.SetActiveAsync(VendorId, id, isActive, ct);
+        return RedirectWithResult(result, nameof(Index), new { q = NormalizeSearch(q), page });
+    }
+
+    /// <summary>Quick stock change. The range (0 - 1,000,000) is checked by the service.</summary>
+    [HttpPost]
+    public async Task<IActionResult> UpdateStock([FromRoute] int id, int? quantity, string? q = null, int page = 1, CancellationToken ct = default)
+    {
+        if (quantity is null)
+        {
+            Flash(false, "Please enter a whole number for the stock quantity.");
+            return RedirectToAction(nameof(Index), new { q = NormalizeSearch(q), page });
+        }
+
+        var result = await _products.AdjustStockAsync(VendorId, id, quantity.Value, ct);
+        return RedirectWithResult(result, nameof(Index), new { q = NormalizeSearch(q), page });
     }
 
     // ------------------------------------------------------------------ helpers
+
+    /// <summary>Trims the search text, turns blank into null and caps it (a product name is at most 150 characters).</summary>
+    private static string? NormalizeSearch(string? q)
+    {
+        var text = q?.Trim();
+        if (string.IsNullOrEmpty(text))
+        {
+            return null;
+        }
+
+        return text.Length > 100 ? text[..100] : text;
+    }
 
     /// <summary>Maps field by field. Nothing the browser sends can reach the service except these fields.</summary>
     private static ProductInput ToInput(ProductFormViewModel model) => new()
