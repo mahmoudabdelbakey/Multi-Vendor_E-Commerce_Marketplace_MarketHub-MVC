@@ -1,6 +1,8 @@
-@model PagedResult<ProductManageDto>
+@model ProductListViewModel
 @{
     ViewData["Title"] = "My products";
+    var products = Model.Products;
+    var searching = !string.IsNullOrEmpty(Model.Search);
 }
 
 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
@@ -8,7 +10,28 @@
     <a class="btn btn-primary" asp-area="Vendor" asp-controller="Products" asp-action="Create">Add product</a>
 </div>
 
-@if (Model.TotalCount == 0)
+@* TASK-37: search by name. GET, so the address can be bookmarked and the paging links keep the text. *@
+@if (products.TotalCount > 0 || searching)
+{
+    <form asp-area="Vendor" asp-controller="Products" asp-action="Index" method="get" class="d-flex flex-wrap gap-2 mb-3" role="search">
+        <input type="search" name="q" value="@Model.Search" class="form-control" style="max-width: 22rem;"
+               maxlength="100" placeholder="Search my products by name" aria-label="Search my products by name" />
+        <button type="submit" class="btn btn-outline-primary">Search</button>
+        @if (searching)
+        {
+            <a class="btn btn-outline-secondary" asp-area="Vendor" asp-controller="Products" asp-action="Index">Clear</a>
+        }
+    </form>
+}
+
+@if (products.TotalCount == 0 && searching)
+{
+    <div class="card card-body text-center py-5">
+        <p class="lead mb-2">No product matches "@Model.Search".</p>
+        <div><a class="btn btn-outline-primary" asp-area="Vendor" asp-controller="Products" asp-action="Index">Show all my products</a></div>
+    </div>
+}
+else if (products.TotalCount == 0)
 {
     <div class="card card-body text-center py-5">
         <p class="lead mb-2">You have no products yet.</p>
@@ -33,7 +56,7 @@ else
                     </tr>
                 </thead>
                 <tbody>
-                @foreach (var p in Model.Items)
+                @foreach (var p in products.Items)
                 {
                     <tr>
                         <td>
@@ -43,17 +66,23 @@ else
                         <td>@p.CategoryName</td>
                         <td class="text-end">@Money(p.Price)</td>
                         <td class="text-end">
+                            @* Quick stock change (TASK-37). *@
+                            <form asp-area="Vendor" asp-controller="Products" asp-action="UpdateStock" asp-route-id="@p.Id" method="post"
+                                  class="d-inline-flex gap-1 justify-content-end" data-once>
+                                <input type="hidden" name="q" value="@Model.Search" />
+                                <input type="hidden" name="page" value="@products.Page" />
+                                <input type="number" name="quantity" value="@p.StockQuantity" min="0" max="1000000" step="1"
+                                       class="form-control form-control-sm text-end" style="width: 6rem;"
+                                       aria-label="Stock of @p.Name" required />
+                                <button type="submit" class="btn btn-sm btn-outline-secondary">Set</button>
+                            </form>
                             @if (p.StockQuantity == 0)
                             {
-                                <span class="badge text-bg-danger">Out of stock</span>
+                                <div><span class="badge text-bg-danger">Out of stock</span></div>
                             }
                             else if (p.StockQuantity <= 5)
                             {
-                                <span class="badge text-bg-warning">@p.StockQuantity left</span>
-                            }
-                            else
-                            {
-                                @p.StockQuantity
+                                <div><span class="badge text-bg-warning">Low stock</span></div>
                             }
                         </td>
                         <td>
@@ -68,9 +97,19 @@ else
                         </td>
                         <td class="text-end text-nowrap">
                             <a class="btn btn-sm btn-outline-primary" asp-area="Vendor" asp-controller="Products" asp-action="Edit" asp-route-id="@p.Id">Edit</a>
+
+                            @* Show / hide (TASK-37): the button asks for the NEW value. *@
+                            <form asp-area="Vendor" asp-controller="Products" asp-action="ToggleActive" asp-route-id="@p.Id" method="post" class="d-inline" data-once>
+                                <input type="hidden" name="isActive" value="@((!p.IsActive).ToString().ToLowerInvariant())" />
+                                <input type="hidden" name="q" value="@Model.Search" />
+                                <input type="hidden" name="page" value="@products.Page" />
+                                <button type="submit" class="btn btn-sm btn-outline-secondary">@(p.IsActive ? "Hide" : "Show")</button>
+                            </form>
+
                             <form asp-area="Vendor" asp-controller="Products" asp-action="Delete" asp-route-id="@p.Id" method="post" class="d-inline"
                                   data-confirm="Delete &quot;@p.Name&quot;? A product that already has orders is hidden instead of deleted.">
-                                <input type="hidden" name="page" value="@Model.Page" />
+                                <input type="hidden" name="q" value="@Model.Search" />
+                                <input type="hidden" name="page" value="@products.Page" />
                                 <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
                             </form>
                         </td>
@@ -83,17 +122,19 @@ else
 
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-3">
         <span class="text-muted small">
-            @Model.TotalCount @(Model.TotalCount == 1 ? "product" : "products") - page @Model.Page of @Math.Max(1, Model.TotalPages)
+            @products.TotalCount @(products.TotalCount == 1 ? "product" : "products")@(searching ? " found" : "") - page @products.Page of @Math.Max(1, products.TotalPages)
         </span>
-        @if (Model.TotalPages > 1)
+        @if (products.TotalPages > 1)
         {
             <nav aria-label="Products pages">
                 <ul class="pagination mb-0">
-                    <li class="page-item @(Model.HasPrevious ? "" : "disabled")">
-                        <a class="page-link" asp-area="Vendor" asp-controller="Products" asp-action="Index" asp-route-page="@(Model.Page - 1)">Previous</a>
+                    <li class="page-item @(products.HasPrevious ? "" : "disabled")">
+                        <a class="page-link" asp-area="Vendor" asp-controller="Products" asp-action="Index"
+                           asp-route-q="@Model.Search" asp-route-page="@(products.Page - 1)">Previous</a>
                     </li>
-                    <li class="page-item @(Model.HasNext ? "" : "disabled")">
-                        <a class="page-link" asp-area="Vendor" asp-controller="Products" asp-action="Index" asp-route-page="@(Model.Page + 1)">Next</a>
+                    <li class="page-item @(products.HasNext ? "" : "disabled")">
+                        <a class="page-link" asp-area="Vendor" asp-controller="Products" asp-action="Index"
+                           asp-route-q="@Model.Search" asp-route-page="@(products.Page + 1)">Next</a>
                     </li>
                 </ul>
             </nav>
